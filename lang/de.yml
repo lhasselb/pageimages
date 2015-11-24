@@ -1,0 +1,29 @@
+de:
+  PageImages:
+    IMAGESSORTER: "Sortieren nach: "
+    IMAGESNOTICE: "<span style='color: green'>Anordnen durch ziehen des Miniaturbildes</span>"
+    IMAGESNOTICEWRONG: "<span style='color: red'>Sortieren der Bilder nicht möglich. Modul SortabeUploadField fehlt.</span>"
+    IMAGESUPLOADLABEL: "Bilder"
+    IMAGESUPLOADLIMIT: "Maximal {limit} Bilder folgender Typen {types}"
+    IMAGETAB: "Bilder"
+    SHOWIMAGES: "Zeige Tab Bilder auf dieser Seite?"
+
+    CHOOSEIMAGEFOLDER: "Verzeichnis auswählen: "
+    FOLDERNOTICE: "Zugeordnetes Verzeichnis."
+    FOLDERNOTICESET: "<span style='color: green'>Gewähltes Verzeichnis ({folder})</span>"
+
+# If configured to DataObject Page
+  Page:
+    db_Sorter_SortOrder: 'Angezeigte Sortierung'
+    db_Sorter_Title: 'Titel'
+    db_Sorter_Name: 'Name'
+    db_Sorter_FileID: 'ID'
+    db_Sorter_Size: 'Größe'
+# If configured to DataObject BlogEntry
+  BlogPost:
+    db_Sorter_SortOrder: 'Angezeigte Sortierung'
+    db_Sorter_Title: 'Titel'
+    db_Sorter_Name: 'Name'
+    db_Sorter_FileID: 'ID'
+    db_Sorter_Size: 'Größe'
+# Please add an entry for your DataObject if required

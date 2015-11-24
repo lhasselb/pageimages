@@ -1,0 +1,29 @@
+en:
+  PageImages:
+    IMAGESSORTER: "Sort imags by: "
+    IMAGESNOTICE: "<span style='color: green'>Sort images by draging thumbnail</span>"
+    IMAGESNOTICEWRONG: "<span style='color: red'>Sorting images by draging thumbnails (SortOrder) not allowed. Missing module SortabeUploadField.</span>"
+    IMAGESUPLOADLABEL: "Images"
+    IMAGESUPLOADLIMIT: "Max. {limit} images of either following type: {types}"
+    IMAGETAB: "Images"
+    SHOWIMAGES: "Show tab images on this page?"
+
+    CHOOSEIMAGEFOLDER: "Select image folder: "
+    FOLDERNOTICE: "Folder assigned to this page."
+    FOLDERNOTICESET: "<span style='color: green'>Choosen Folder ({folder})</span>"
+
+# If configured to DataObject Page
+  Page:
+    db_Sorter_SortOrder: 'Displayed order'
+    db_Sorter_Title: 'Title'
+    db_Sorter_Name: 'Name'
+    db_Sorter_FileID: 'ID'
+    db_Sorter_Size: 'Size'
+# If configured to DataObject BlogEntry
+  BlogPost:
+    db_Sorter_SortOrder: 'Displayed order'
+    db_Sorter_Title: 'Title'
+    db_Sorter_Name: 'Name'
+    db_Sorter_FileID: 'ID'
+    db_Sorter_Size: 'Size'
+# Please add an entry for your DataObject if required

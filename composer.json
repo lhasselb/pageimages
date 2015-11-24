@@ -1,0 +1,24 @@
+{
+	"name": "lhasselb/pageimages",
+	"description": "Add image(s) to any dataobject",
+	"type": "silverstripe-module",
+	"license": "BSD-3-Clause",
+	"keywords": ["silverstripe", "gallery", "photos", "images"],
+	"authors": [
+	{
+		"name": "guggelimehl",
+		"email": "guggelimehl@gmail.com"
+	}
+	],
+	"require":
+	{
+		"silverstripe/framework": "3.*",
+		"silverstripe/cms": "3.*",
+		"bummzack/sortablefile": "*",
+		"unisolutions/silverstripe-i18nenum"
+	},
+	"suggest": {
+		"heyday/silverstripe-optimisedimage": "*",
+		"jonom/focuspoint": "*"
+	}
+}
