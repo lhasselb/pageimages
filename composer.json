@@ -15,7 +15,7 @@
 		"silverstripe/framework": "3.*",
 		"silverstripe/cms": "3.*",
 		"bummzack/sortablefile": "*",
-		"unisolutions/silverstripe-i18nenum"
+		"unisolutions/silverstripe-i18nenum":"*"
 	},
 	"suggest": {
 		"heyday/silverstripe-optimisedimage": "*",
