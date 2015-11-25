@@ -7,10 +7,8 @@ de:
     IMAGESUPLOADLIMIT: "Maximal {limit} Bilder folgender Typen {types}"
     IMAGETAB: "Bilder"
     SHOWIMAGES: "Zeige Tab Bilder auf dieser Seite?"
-
     CHOOSEIMAGEFOLDER: "Verzeichnis auswählen: "
-    FOLDERNOTICE: "Zugeordnetes Verzeichnis."
-    FOLDERNOTICESET: "<span style='color: green'>Gewähltes Verzeichnis ({folder})</span>"
+
 
 # If configured to DataObject Page
   Page:
