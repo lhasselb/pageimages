@@ -1,5 +1,11 @@
-# ---
-Name: pageimages-settings
+---
+Name: PageImagesExtension
+After:
+   - 'framework/*'
+   - 'cms/*'
+---
+
+
 # ---
 # Please read the following carefully.
 # You can specify values other than default
@@ -10,19 +16,30 @@ Name: pageimages-settings
 # e.g. BlogPost (within module Blog).
 
 # (1) pageimages configurable parameter(s):
-# Set a max amount of images per DataObjects.
+PageImagesExtension:
+# Set a max amount of images .
 # Default = 5.
-#  ImageCountLimit: 5
+#  image_count_limit: 10
 
-# Set a specific folder name within Uploads
-# will upload to /PATH_TO_SS_ROOT/assets/Uploads/[UploadFolderName].
-# Default = /PATH_TO_SS_ROOT/assets/Uploads
-#  UploadFolderName: blog
+# Set a specific folder name to upload to
+# Default = Uploads
+#  upload_folder_name: 'UploadFolderName'
 
-# Set to 1 to avoid uploading images on instance level
-# thus limit to select existing images only
-# Default = nothing set -> upload is allowed
-#  AvoidImageUpload: 1
+# Set to false to avoid uploading images
+# Default = true
+#  can_upload: false
+
+# Set allowed extensions for images
+# Default [jpg,jpeg,gif,png]
+#  allowed_extensions:
+#    - jpg
+#    - jpeg
+#    - gif
+#    - png
+
+# Set allowed maximum filesize for images
+# Default = 1048576 = 1MB (1* 1024 * 1024)
+#  allowed_max_file_size = 1048576
 
 # (2) Use pageimages to extend a DataObject
 # To disable the extension for all pages - DataObject Page
