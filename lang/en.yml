@@ -4,13 +4,11 @@ en:
     IMAGESNOTICE: "<span style='color: green'>Sort images by draging thumbnail</span>"
     IMAGESNOTICEWRONG: "<span style='color: red'>Sorting images by draging thumbnails (SortOrder) not allowed. Missing module SortabeUploadField.</span>"
     IMAGESUPLOADLABEL: "Images"
-    IMAGESUPLOADLIMIT: "Max. {limit} images of either following type: {types}"
+    IMAGESUPLOADLIMIT: "Up to {count} images ({extensions}) with a max. size of {size} MB per file."
     IMAGETAB: "Images"
     SHOWIMAGES: "Show tab images on this page?"
-
     CHOOSEIMAGEFOLDER: "Select image folder: "
-    FOLDERNOTICE: "Folder assigned to this page."
-    FOLDERNOTICESET: "<span style='color: green'>Choosen Folder ({folder})</span>"
+
 
 # If configured to DataObject Page
   Page:
