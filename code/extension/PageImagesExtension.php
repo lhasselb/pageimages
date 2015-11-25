@@ -1,31 +1,27 @@
 <?php
-
 /**
- * This class adds image support to the CMS, allowing you to tick "Show tab images on this page"
- * under the settings pane. This then adds the Images tab.
+ * Extension to enable images on a DataObject.
+ * ========================================
+ * This class adds image support to DataObjects, allowing you to tick "Show tab images on this page"
+ * under the settings pane.
+ * Decorate DataObject with a booloan (is image tab enabled?)
+ * and an enum for a sort and sort direction dropdown as i18Enum.
+ * Enum has been replaced by i18nEnum to enable translation.
+ * Use 'ShowImages' => 'Boolean(1)' for enabling images by default.
+ *
  * @author guggelimehl [at] gmail.com
  * @package pageimages
  */
 class PageImagesExtension extends DataExtension{
 
-    /**
-     * Using i18n enum:
-     * Please consider the convention for language.yml which depends
-     * on the choosen DataObject.
-     * Example using german language for DataObject Page
-     * de:
-     *   Page:
-     *     db_Sorter_SortOrder: 'Displayed order'
-     *     db_Sorter_Title: 'Title'
-     *     db_Sorter_Name: 'Name'
-     *     db_Sorter_FileID: 'ID'
-     */
     // Add 2 columns to table page (ShowImages, Sorter)
     private static $db = array(
         // Store if images tab should be shown
         'ShowImages' => 'Boolean(1)',
-        // Enum replaced by i18nEnum to enable translation
-        'Sorter' => 'i18nEnum("SortOrder, Title, Name, FileID, Size")'
+        // Store sort attribute used
+        'Sorter' => 'i18nEnum("SortOrder, Title, Name, FileID, Size")',
+        // Store sort direction
+        'SorterDir' => 'i18nEnum("ASC, DESC")'
     );
 
     // Add a column to table page (FolderID)
@@ -50,6 +46,30 @@ class PageImagesExtension extends DataExtension{
         'Images' => array('SortOrder' => 'Int')
     );
 
+    /**
+     * @config string upload folder name used to store/load images
+     */
+    private static $upload_folder_name = "Uploads";
+
+    /**
+     * @config var int max number of images allowed
+     */
+    private static $image_count_limit = 5;
+
+    /**
+     * @config var bool is image upload possible?
+     */
+    private static $can_upload = true;
+
+    /**
+     * @config var array list of allowed extensions
+     */
+    private static $allowed_extensions = []; // Empty because we're defaulting to category image
+
+    /**
+     * @config var int max file size for images
+     */
+    private static $allowed_max_file_size = 1048576; // 1 MB in bytes;
 
     /**
      * Add an additional tab in the CMS interface
@@ -65,40 +85,32 @@ class PageImagesExtension extends DataExtension{
             // Obtain selected folder ID - if nothing selected yet -> 0 !
             $selectedFolderPathNameId = $this->owner->Folder()->ID;
 
-            // Obtain configured limit from config.yml or extensions.yml or fallback to 5
-            $limit =  Config::inst()->get('pageimages-settings', 'ImageCountLimit');
-            // Set a default
-            if(empty($limit)) $limit = 5;
+            // Obtain folder name
+            if (!empty(Config::inst()->get('PageImagesExtension', 'upload_folder_name')))
+                $upload_folder_name = Config::inst()->get('PageImagesExtension', 'upload_folder_name');
+
+            // Obtain configured limit from configuration or fallback to 5
+            if (!empty(Config::inst()->get('PageImagesExtension', 'image_count_limit')))
+                $image_count_limit = Config::inst()->get('PageImagesExtension', 'image_count_limit');
+
+            // Obtain if images can be uploaded (if not they can be selected only)
+            if (!empty(Config::inst()->get('PageImagesExtension', 'can_upload')))
+                $can_upload = Config::inst()->get('PageImagesExtension', 'can_upload');
+
+            // Obtain alowed image extensions
+            if (!empty(Config::inst()->get('PageImagesExtension', 'allowed_extensions')))
+                $allowed_extensions = Config::inst()->get('PageImagesExtension', 'allowed_extensions');
+
+            // Obtain max alowed file size for image uploads
+            if (!empty(Config::inst()->get('PageImagesExtension', 'allowed_max_file_size')))
+                $allowed_max_file_size = Config::inst()->get('PageImagesExtension', 'allowed_max_file_size');
+
 
             // Use SortableUploadField instead of UploadField (if available)!
             $uploadClass = (class_exists("SortableUploadField") && $this->owner->Sorter == "SortOrder") ? "SortableUploadField" : "UploadField";
 
             // Create a sortable uploadfield called imageField with an translateable name (default name "Images")
             $imageField = $uploadClass::create('Images', _t("PageImages.IMAGESUPLOADLABEL", "Images"));
-
-            // Set allowed file type(s) to category image
-            $imageField->setAllowedFileCategories('image');
-
-            // Further limiting to jpg, gif and png
-            $imageField->getValidator()->allowedExtensions = array('jpeg','jpg', 'gif', 'png');
-
-            // Get allowed types
-            $types = implode(",", $imageField->getAllowedExtensions());
-
-            // Add a description to be displayed
-            $imageField->setDescription(_t("PageImages.IMAGESUPLOADLIMIT","Max. {limit} images of either following type: {types}",array('limit' => $limit,'types' => $types)));
-
-            // Set configuration parameter "allowedMaxFileNumber" to $limit
-            $imageField->setConfig('allowedMaxFileNumber', $limit);
-
-            // Replace an existing file rather than renaming the new one.
-            $imageField->getUpload()->setReplaceFile(true);
-
-            // Warning before overwriting existing file (only relevant when Upload: replaceFile is true)
-            $imageField->setOverwriteWarning(true);
-
-            // Obtain configured folder name from config.yml or extensions.yml
-            $uploadFolderPathName = Config::inst()->get('pageimages-settings', 'UploadFolderName');
 
             // Obtain user selected folder
             if($selectedFolderPathNameId != 0) {
@@ -110,25 +122,40 @@ class PageImagesExtension extends DataExtension{
             // No folder selected yet, check configured folder
             } else {
                 // No configuration set? default to Uploads
-                if(empty($uploadFolderPathName) || $uploadFolderPathName == null) {
-                    // Default to /PATH_TO_SS_ROOT/assets/Uploads/CLASSNAME/ID
-                    // $uploadFolderPathName = 'Uploads/'.$this->owner->ClassName.'/'.$this->owner->ID;
-                    $uploadFolderPathName = 'Uploads/';
-                }
-                // Set configured or default folder to SortableUploadField
-                $imageField->setFolderName($uploadFolderPathName);
-                $imageField->setDisplayFolderName($uploadFolderPathName);
+                $imageField->setFolderName($upload_folder_name);
+                $imageField->setDisplayFolderName($upload_folder_name);
             }
+            // Set configuration parameter "allowedMaxFileNumber" to $image_count_limit
+            $imageField->setConfig('allowedMaxFileNumber', $image_count_limit);
+            // Set can upload
+            if ($can_upload == '0' || $can_upload == false) {
+                $imageUploadField->setCanUpload(false);
+                //$imageUploadField->setConfig('canUpload', false);
+            }
+            // Set allowed file type(s) to category image
+            $imageField->setAllowedFileCategories('image');
+            // Further limiting if set
+            if(!empty($allowed_extensions))
+                $imageField->getValidator()->allowedExtensions = $allowed_extensions;
+            // Set allowed max filesize
+            $imageField->getValidator()->setAllowedMaxFileSize($allowed_max_file_size);
+            // Replace an existing file rather than renaming the new one.
+            $imageField->getUpload()->setReplaceFile(true);
+            // Warning before overwriting existing file (only relevant when Upload: replaceFile is true)
+            $imageField->setOverwriteWarning(true);
+            // Add a description to be displayed
+            $imageField->setDescription(_t("PageImages.IMAGESUPLOADLIMIT","Up to {count} images ({extensions}) with a max. size of {size} MB per file.",array(
+                'count' => $image_count_limit,
+                'extensions' => implode(",", $imageField->getAllowedExtensions()),
+                'size' => $allowed_max_file_size / 1024 / 1024
+            )));
 
-            // Obtain if image upload is disabled
-            $avoidImageUpload = Config::inst()->get('pageimages-settings', 'AvoidImageUpload');
-            // Default 0
-            if($avoidImageUpload == '1') {
-                $imageField->setCanUpload(false);
-            }
+
 
             // Create a dropdown using Sorter
-            $dropdownSorter = DropdownField::create('Sorter', _t("PageImages.IMAGESSORTER", "Sort imags by: "))->setSource($this->owner->dbObject('Sorter')->enumValues());
+            $dropdownSorter = DropdownField::create(
+                'Sorter', _t("PageImages.IMAGESSORTER", "Sort imags by: ")
+                )->setSource($this->owner->dbObject('Sorter')->enumValues());
             // Add additional class for jquery selector
             $dropdownSorter->addExtraClass('sorter');
 
@@ -140,14 +167,6 @@ class PageImagesExtension extends DataExtension{
             } else {
                 $imageNotice =  "";//_t("PageImages.IMAGESSORTERNOTICE", "Correct image sorting is visible on frontend only (if Sort by = Title, ID, Name)");
             }
-
-            // Show a notice about the user selected folder
-            if($selectedFolderPathNameId == 0) {
-                $folderNotice = "";//_t("PageImages.FOLDERNOTICE", "Folder assigned to this page.");
-            } else{
-                $folderNotice = "";//_t("PageImages.FOLDERNOTICESET", "<span style='color: green'>Choosen Folder ({folder})</span>",array('folder' => $selectedFolderPathName));
-            }
-
 
             // Important: Use propertyID as reference name to store the selected value
             // Info: A click on the selected folder within the interface will reset or better unset!
@@ -163,8 +182,6 @@ class PageImagesExtension extends DataExtension{
             // Create a new tab and place it after Main tab
             $fields->insertAfter(new Tab($imageTabTitle, $imageTabHeader), 'Main');
 
-            // Add a folder notice to the tab
-            $fields->addFieldToTab($imageTab, HeaderField::create('FolderNotice', $folderNotice)->setHeadingLevel(4));
             // Add treedropdown to the tab
             $fields->addFieldToTab($imageTab, $selectFolderTreedropdown);
             // Add a image notice to the tab
