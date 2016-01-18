@@ -59,28 +59,3 @@ If a parameter is not set, default values will be used:
 	# Defaul = nothing set -> upload is allowed
 	AvoidImageUpload: 1
 
-## Known Issues
-This is not really an issue, it is just not perfect yet ;-)
-To translate the dropdown used within the back-end to control the sort order I added [i18nEnum](https://github.com/unisolutions/silverstripe-i18nenum) which extends the Enum type with a translation feature.
-To add a translation one should respect the required convention
-
-    db_[FIELD_NAME]_[VALUE_NAME]
-
-and the used DataObject as namespace.
-The file /SS_ROOT/pageimages/lang/en.yml contains already some working examples:
-
-    # If configured to DataObject Page
-      Page:
-        db_Sorter_SortOrder: 'Displayed order'
-        db_Sorter_Title: 'Title'
-        db_Sorter_Name: 'Name'
-        db_Sorter_FileID: 'ID'
-        db_Sorter_Size: 'Size'
-    # If configured to DataObject BlogEntry
-      BlogPost:
-        db_Sorter_SortOrder: 'Displayed order'
-        db_Sorter_Title: 'Title'
-        db_Sorter_Name: 'Name'
-        db_Sorter_FileID: 'ID'
-        db_Sorter_Size: 'Size'
-    # Please add an entry for your DataObject if required

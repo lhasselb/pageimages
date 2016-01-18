@@ -8,20 +8,9 @@ de:
     IMAGETAB: "Bilder"
     SHOWIMAGES: "Zeige Tab Bilder auf dieser Seite?"
     CHOOSEIMAGEFOLDER: "Verzeichnis auswählen: "
-
-
-# If configured to DataObject Page
-  Page:
-    db_Sorter_SortOrder: 'Angezeigte Sortierung'
-    db_Sorter_Title: 'Titel'
-    db_Sorter_Name: 'Name'
-    db_Sorter_FileID: 'ID'
-    db_Sorter_Size: 'Größe'
-# If configured to DataObject BlogEntry
-  BlogPost:
-    db_Sorter_SortOrder: 'Angezeigte Sortierung'
-    db_Sorter_Title: 'Titel'
-    db_Sorter_Name: 'Name'
-    db_Sorter_FileID: 'ID'
-    db_Sorter_Size: 'Größe'
-# Please add an entry for your DataObject if required
+# Sorter (Enum) translation
+    SortOrder: "Wie hier gezeigt"
+    Title: "Titel"
+    Name: "Name"
+    FileID: "ID"
+    Size: "Größe"

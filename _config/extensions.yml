@@ -1,5 +1,5 @@
 ---
-Name: PageImagesExtension
+Name: PageImages
 After:
    - 'framework/*'
    - 'cms/*'
@@ -16,7 +16,7 @@ After:
 # e.g. BlogPost (within module Blog).
 
 # (1) pageimages configurable parameter(s):
-PageImagesExtension:
+PageImages:
 # Set a max amount of images .
 # Default = 5.
 #  image_count_limit: 10
@@ -46,10 +46,10 @@ PageImagesExtension:
 # comment out the following :
 Page:
   extensions:
-    - PageImagesExtension
+    - PageImages
 
 # To enable the extension for Blog pages (DataObject BlogPost)
 # uncomment the following or copy it to config.yml within the Blog module:
 #BlogPost:
 #  extensions:
-#    - PageImagesExtension
+#    - PageImages
