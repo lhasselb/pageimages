@@ -12,7 +12,7 @@
  * @author guggelimehl [at] gmail.com
  * @package pageimages
  */
-class PageImagesExtension extends DataExtension{
+class PageImages extends DataExtension{
 
     // Add 2 columns to table page (ShowImages, Sorter)
     private static $db = array(
@@ -86,24 +86,24 @@ class PageImagesExtension extends DataExtension{
             $selectedFolderPathNameId = $this->owner->Folder()->ID;
 
             // Obtain folder name
-            if (!empty(Config::inst()->get('PageImagesExtension', 'upload_folder_name')))
-                $upload_folder_name = Config::inst()->get('PageImagesExtension', 'upload_folder_name');
+            if (!empty(Config::inst()->get('PageImages', 'upload_folder_name')))
+                $upload_folder_name = Config::inst()->get('PageImages', 'upload_folder_name');
 
             // Obtain configured limit from configuration or fallback to 5
-            if (!empty(Config::inst()->get('PageImagesExtension', 'image_count_limit')))
-                $image_count_limit = Config::inst()->get('PageImagesExtension', 'image_count_limit');
+            if (!empty(Config::inst()->get('PageImages', 'image_count_limit')))
+                $image_count_limit = Config::inst()->get('PageImages', 'image_count_limit');
 
             // Obtain if images can be uploaded (if not they can be selected only)
-            if (!empty(Config::inst()->get('PageImagesExtension', 'can_upload')))
-                $can_upload = Config::inst()->get('PageImagesExtension', 'can_upload');
+            if (!empty(Config::inst()->get('PageImages', 'can_upload')))
+                $can_upload = Config::inst()->get('PageImages', 'can_upload');
 
             // Obtain alowed image extensions
-            if (!empty(Config::inst()->get('PageImagesExtension', 'allowed_extensions')))
-                $allowed_extensions = Config::inst()->get('PageImagesExtension', 'allowed_extensions');
+            if (!empty(Config::inst()->get('PageImages', 'allowed_extensions')))
+                $allowed_extensions = Config::inst()->get('PageImages', 'allowed_extensions');
 
             // Obtain max alowed file size for image uploads
-            if (!empty(Config::inst()->get('PageImagesExtension', 'allowed_max_file_size')))
-                $allowed_max_file_size = Config::inst()->get('PageImagesExtension', 'allowed_max_file_size');
+            if (!empty(Config::inst()->get('PageImages', 'allowed_max_file_size')))
+                $allowed_max_file_size = Config::inst()->get('PageImages', 'allowed_max_file_size');
 
 
             // Use SortableUploadField instead of UploadField (if available)!
@@ -155,7 +155,7 @@ class PageImagesExtension extends DataExtension{
             // Create a dropdown using Sorter
             $dropdownSorter = DropdownField::create(
                 'Sorter', _t("PageImages.IMAGESSORTER", "Sort imags by: ")
-                )->setSource($this->owner->dbObject('Sorter')->enumValues());
+                )->setSource($this->owner->dbObject('Sorter')->enumValues($this->class));
             // Add additional class for jquery selector
             $dropdownSorter->addExtraClass('sorter');
 
