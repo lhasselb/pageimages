@@ -44,7 +44,6 @@ BlogPost:
 There are parameters available which can be used in extensions.yml.
 If a parameter is not set, default values will be used:
 ```
-PageImages:
 # Set a max amount of images .
 # Default = 5.
 #  image_count_limit: 10
@@ -58,7 +57,7 @@ PageImages:
 #  can_upload: false
 
 # Set allowed extensions for images
-# Default [jpg,jpeg,gif,png]
+# Default limited to types known by file category image
 #  allowed_extensions:
 #    - jpg
 #    - jpeg
@@ -67,5 +66,5 @@ PageImages:
 
 # Set allowed maximum filesize for images
 # Default = 1048576 = 1MB (1* 1024 * 1024)
-#  allowed_max_file_size = 1048576
+#  allowed_max_file_size: 1048576
 ```
