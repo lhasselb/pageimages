@@ -15,11 +15,9 @@ Uses a has_one relation to assign a folder containing your images. Offers [Uploa
 
 
 ## Configure
-This extension relies on [silverstripe configuration](http://doc.silverstripe.com/framework/en/topics/configuration).
-
-You are able to configure the extension globally by using the existing file /SS_ROOT/pageimages/_config/extensions.yml
-or by adding the required lines to your project or a specific module, e.g. Blog module.
-The same applies to the configurable parameters section.
+By default the extension is globally enabled using the file /SS_ROOT/pageimages/_config/extensions.yml. You can limit the extension to specific DataObjects within a module like
+the Blog module by changing the configuration.
+Read more about [silverstripe configuration](http://doc.silverstripe.com/framework/en/topics/configuration).
 
 ## Examples
 By default the extension is enabled for all pages after the installation.
@@ -36,12 +34,11 @@ Page:
 ### HowTo enable images for blog pages only
 To enable the extension for blog pages only please open the file "extensions.yml" within
 "/SS_ROOT/pageimages/_config" folder and comment out the mentioned lines above and uncomment the lines below.
-
-  BlogPost:
-    extensions:
-      - PageImages
-
-As module specific configuration comment out all within extensions.yml and copy the latter to _config/config.yml within the Blog module.
+```
+BlogPost:
+  extensions:
+    - PageImages
+```
 
 ## Configurable parameter(s)
 There are parameters available which can be used in extensions.yml.

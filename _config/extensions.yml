@@ -5,17 +5,8 @@ After:
    - 'cms/*'
 ---
 
-
 # ---
-# Please read the following carefully.
-# You can specify values other than default
-# by un-commenting the mentioned parameter(s)
-# within (1)
-# and enable the extension for
-# all pages or specific DataObjects (2),
-# e.g. BlogPost (within module Blog).
-
-# (1) pageimages configurable parameter(s):
+# pageimages configurable parameter(s):
 PageImages:
 # Set a max amount of images .
 # Default = 5.
@@ -41,15 +32,15 @@ PageImages:
 # Default = 1048576 = 1MB (1* 1024 * 1024)
 #  allowed_max_file_size = 1048576
 
-# (2) Use pageimages to extend a DataObject
+# Use pageimages to extend a DataObject
 # To disable the extension for all pages - DataObject Page
-# comment out the following :
+# comment out the following:
 Page:
   extensions:
     - PageImages
 
-# To enable the extension for Blog pages (DataObject BlogPost)
-# uncomment the following or copy it to config.yml within the Blog module:
+# To enable the extension for Blog pages - DataObject BlogPost
+# uncomment the following:
 #BlogPost:
 #  extensions:
 #    - PageImages
