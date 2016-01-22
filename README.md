@@ -19,8 +19,8 @@ By default the extension is globally enabled using the file /SS_ROOT/pageimages/
 the Blog module by changing the configuration.
 Read more about [silverstripe configuration](http://doc.silverstripe.com/framework/en/topics/configuration).
 
-## Examples
-By default the extension is enabled for all pages after the installation.
+## Example
+Like mentioned above the extension is enabled for all pages after the installation.
 See file "extensions.yml" within "/SS_ROOT/pageimages/_config" folder.
 ```
 # ---
@@ -33,7 +33,7 @@ Page:
 
 ### HowTo enable images for blog pages only
 To enable the extension for blog pages only please open the file "extensions.yml" within
-"/SS_ROOT/pageimages/_config" folder and comment out the mentioned lines above and uncomment the lines below.
+"/SS_ROOT/pageimages/_config" folder and comment out the lines mentioned above and uncomment the lines below.
 ```
 BlogPost:
   extensions:
