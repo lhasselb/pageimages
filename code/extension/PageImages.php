@@ -132,17 +132,15 @@ class PageImages extends DataExtension
             $imageField->setConfig('allowedMaxFileNumber', $image_count_limit);
 
             // Set can upload
-            if ($can_upload == '0' || $can_upload == false) {
-                SS_Log::log("can_upload = false", SS_Log::WARN);
+            if ($can_upload == '0' || $can_upload == false)
                 $imageField->setCanUpload(false);
-            } else
-                SS_Log::log("can_upload = true", SS_Log::WARN);
 
-                // Set allowed file type(s) to category image
+            // Set allowed file type(s) to category image
             $imageField->setAllowedFileCategories('image');
             // Further limiting if set
             if (! empty($allowed_extensions))
                 $imageField->getValidator()->allowedExtensions = $allowed_extensions;
+
                 // Set allowed max filesize
             $imageField->getValidator()->setAllowedMaxFileSize($allowed_max_file_size);
             // Replace an existing file rather than renaming the new one.
