@@ -23,14 +23,14 @@ PageImages:
 # Set allowed extensions for images
 # Default [jpg,jpeg,gif,png]
 #  allowed_extensions:
-#    - jpg
-#    - jpeg
-#    - gif
-#    - png
+    - jpg
+    - jpeg
+    - gif
+    - png
 
 # Set allowed maximum filesize for images
 # Default = 1048576 = 1MB (1* 1024 * 1024)
-#  allowed_max_file_size = 1048576
+#  allowed_max_file_size: 1048576
 
 # Use pageimages to extend a DataObject
 # To disable the extension for all pages - DataObject Page
