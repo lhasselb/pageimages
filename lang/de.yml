@@ -4,7 +4,7 @@ de:
     IMAGESNOTICE: "<span style='color: green'>Anordnen durch ziehen des Miniaturbildes</span>"
     IMAGESNOTICEWRONG: "<span style='color: red'>Sortieren der Bilder nicht möglich. Modul SortabeUploadField fehlt.</span>"
     IMAGESUPLOADLABEL: "Bilder"
-    IMAGESUPLOADLIMIT: "Maximal {limit} Bilder folgender Typen {types}"
+    IMAGESUPLOADLIMIT: "Maximal {count} Bilder folgender Typen {extensions} mit einer Größe von {size} MB pro Datei."
     IMAGETAB: "Bilder"
     SHOWIMAGES: "Zeige Tab Bilder auf dieser Seite?"
     CHOOSEIMAGEFOLDER: "Verzeichnis auswählen: "
