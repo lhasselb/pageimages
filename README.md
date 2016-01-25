@@ -1,3 +1,4 @@
+
 # SilverStripe page image extension
 
 Add images to a DataObject
@@ -14,13 +15,9 @@ Uses a has_one relation to assign a folder containing your images. Offers [Uploa
     bummzack/sortablefile
 
 
-## Configure
-By default the extension is globally enabled using the file /SS_ROOT/pageimages/_config/extensions.yml. You can limit the extension to specific DataObjects within a module like
-the Blog module by changing the configuration.
-Read more about [silverstripe configuration](http://doc.silverstripe.com/framework/en/topics/configuration).
-
-## Example
-Like mentioned above the extension is enabled for all pages after the installation.
+## Configuration
+By default the extension is enabled for DataObject Page.
+You can add the extension to other modules like the Blog module by changing the configuration.
 See file "extensions.yml" within "/SS_ROOT/pageimages/_config" folder.
 ```
 # ---
@@ -30,15 +27,17 @@ Page:
   extensions:
     - PageImages
 ```
+Read more about [silverstripe configuration](http://doc.silverstripe.com/framework/en/topics/configuration).
 
-### HowTo enable images for blog pages only
-To enable the extension for blog pages only please open the file "extensions.yml" within
-"/SS_ROOT/pageimages/_config" folder and comment out the lines mentioned above and uncomment the lines below.
+### HowTo enable images for blog pages
+Add the following to your config.yml within "/SS_ROOT/mysite/_config"
 ```
 BlogPost:
   extensions:
     - PageImages
 ```
+You'll also need to run `dev/build`.
+
 
 ## Configurable parameter(s)
 There are parameters available which can be used in extensions.yml.
