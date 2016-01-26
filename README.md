@@ -18,11 +18,8 @@ Uses a has_one relation to assign a folder containing your images. Offers [Uploa
 ## Configuration
 By default the extension is enabled for DataObject Page.
 You can add the extension to other modules like the Blog module by changing the configuration.
-See file "extensions.yml" within "/SS_ROOT/pageimages/_config" folder.
+See file "config.yml" within "/SS_ROOT/pageimages/_config" folder.
 ```
-# ---
-Name: pageimages-settings
-# ---
 Page:
   extensions:
     - PageImages
@@ -39,24 +36,23 @@ BlogPost:
 You'll also need to run `dev/build`.
 
 
-## Configurable parameter(s)
-There are parameters available which can be used in extensions.yml.
-If a parameter is not set, default values will be used:
+## Configurable parameter(s) available in config.yml.
+If a parameter is not set, default value will be used:
 ```
-# Set a max amount of images .
+# Set max amount of images.
 # Default = 5.
-#  image_count_limit: 10
+#  image_count_limit: 5
 
 # Set a specific folder name to upload to
 # Default = Uploads
-#  upload_folder_name: 'UploadFolderName'
+#  upload_folder_name: 'Uploads'
 
-# Set to false to avoid uploading images
+# Avoid uploading images (select existing from assets)
 # Default = true
-#  can_upload: false
+#  can_upload: true
 
 # Set allowed extensions for images
-# Default limited to types known by file category image
+# Default to types known by file category image
 #  allowed_extensions:
 #    - jpg
 #    - jpeg
