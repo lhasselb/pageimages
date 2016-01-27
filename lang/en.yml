@@ -1,6 +1,7 @@
 en:
   PageImages:
     IMAGESSORTER: "Sort imags by: "
+    IMAGESSORTERDIR: "Sort direction: "
     IMAGESNOTICE: "<span style='color: green'>Sort images by draging thumbnail</span>"
     IMAGESNOTICEWRONG: "<span style='color: red'>Sorting images by draging thumbnails (SortOrder) not allowed. Missing module SortabeUploadField.</span>"
     IMAGESUPLOADLABEL: "Images"
@@ -14,3 +15,5 @@ en:
     Name: "Name"
     FileID: "ID"
     Size: "Size"
+    ASC: "Ascending"
+    DESC: "Descending"
