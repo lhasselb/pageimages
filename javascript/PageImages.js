@@ -5,20 +5,43 @@
 (function($) {
     $.entwine('ss', function($) {
 
+        var sortedList = function (list, attr, dir) {
+            //console.log('sorter=' + attr + ', dir=' + dir);
+            list.sort(function(a,b) {
+                // Compare integer
+                if(attr =='size') {
+                    if(dir =='asc') {
+                            return (parseInt( ($(a).data(attr)).slice(0,-3), 10 ) - parseInt( ($(b).data(attr)).slice(0,-3), 10 ));
+                    } else {
+                            return (parseInt( ($(b).data(attr)).slice(0,-3), 10 ) - parseInt( ($(a).data(attr)).slice(0,-3), 10 ));
+                    }
+                // Compare String
+                } else {
+                    if(dir =='asc') {
+                            return (($(b).data(attr)) < ($(a).data(attr)) ? 1 : -1);
+                    } else {
+                            return (($(b).data(attr)) > ($(a).data(attr)) ? 1 : -1);
+                    }
+                }
+            });
+            return list;
+        };
         /**
          * Class: select.dropdown.sorter
          *
-         * Sort list by selected image attribute
+         * Sort list by selected image attribute (title, name, fileID, size)
          */
         $('select.dropdown.sorter').entwine({
             onchange: function() {
-                var sorter = this.find(":selected").val().toLowerCase();
-                var lis = $('ul.ss-uploadfield-files.files li');
-                //jQuery.each( lis, function( i, element ) {console.log(i + ' ' + $(element).data(sorter));});
-                lis.sort(function(a,b) {
-                    return ($(b).data(sorter)) < ($(a).data(sorter)) ? 1 : -1;
-                });
-                $('ul.ss-uploadfield-files.files').html(lis);
+                var sorter = this.val().toLowerCase();
+                var sorterdir = $('select.dropdown.sorterdir').val().toLowerCase();
+                if ( sorter!= 'sortorder') {
+                    var imagesList = $('ul.ss-uploadfield-files.files li');
+                    $('ul.ss-uploadfield-files.files').html(sortedList(imagesList,sorter,sorterdir));
+                    $('div.field.dropdown.sorterdir').show();
+                } else {
+                    $('div.field.dropdown.sorterdir').hide();
+                }
                 //this._super();
             }
         });
@@ -26,75 +49,16 @@
         /**
          * Class: select.dropdown.sorterdir
          *
-         * Sort list by selected sort direction
+         * Sort list by selected sort direction (asc, desc)
          */
         $('select.dropdown.sorterdir').entwine({
             onchange: function() {
-                var sorter = $('select.dropdown.sorter').find(":selected").val().toLowerCase();
-                var sorterdir = this.find(":selected").val().toLowerCase();
-                var lis = $('ul.ss-uploadfield-files.files li');
-                //jQuery.each( lis, function( i, element ) {console.log(i + ' ' + $(element).data(sorter));});
-                lis.sort(function(a,b) {
-                    if(sorterdir == 'asc') {
-                        return ($(b).data(sorter)) < ($(a).data(sorter)) ? 1 : -1;
-                    } else return ($(b).data(sorter)) > ($(a).data(sorter)) ? 1 : -1;
-                });
-
-
-
-                $('ul.ss-uploadfield-files.files').html(lis);
+                var sorterdir = this.val().toLowerCase();
+                var sorter = $('select.dropdown.sorter').val().toLowerCase();
+                var imagesList = $('ul.ss-uploadfield-files.files li');
+                $('ul.ss-uploadfield-files.files').html(sortedList(imagesList,sorter,sorterdir));
                 //this._super();
             }
-        });
-
-        /**
-         * Class: div.TreeDropdownField.treedropdown.single.searchable.searchable
-         *
-         * Update UploadField label item name
-         */
-        $('div.TreeDropdownField.treedropdown.single.searchable.searchable').entwine({
-            onchange: function() {
-                var selectedFolder = this.find('span.treedropdownfield-title').text();
-                var pattern = /\/(.*?)\)$/;
-                var labelFolder = $('label.ss-uploadfield-item-name small').html();
-                var updatedLabelFolder = labelFolder.replace(pattern,'\/' + selectedFolder + '\)');
-                //console.log('updated = ' + updated );
-                this._super();
-
-            }
-        });
-
-        /**
-         * Class: #Form_EditForm_Sorter option:selected
-         *
-         * Hide sort direction on manual sort otption
-         */
-        $('#Form_EditForm_Sorter option:selected').entwine({
-            onmatch: function() {
-                //console.log('match ' + this.val());
-                if(this.val() == 'SortOrder') {
-                    $('#Form_EditForm_SorterDir_Holder').hide();
-                } else {
-                    $('#Form_EditForm_SorterDir_Holder').show();
-                }
-                this._super();
-            }
-        });
-
-        /**
-         * Class: div.ss-upload
-         *
-         * Hide sorter field(s) for 0 or 1 image on page load
-         */
-        $('div.ss-upload').entwine({
-            onmatch: function() {
-                this._super();
-                if($('li.ss-uploadfield-item').length < 2) {
-                    $('div.field.dropdown.sorter').hide();
-                } else {
-                    $('div.field.dropdown.sorter').show();
-                }
-            },
         });
 
         /**
@@ -102,24 +66,20 @@
          *
          * Hide sorter field(s) for 0 or 1 image on adding or removing an image
          */
-        $('div.ss-upload .ss-uploadfield-files .ss-uploadfield-item').entwine({
+        $('div.ss-upload .ss-uploadfield-files li.ss-uploadfield-item').entwine({
             onadd: function() {
                 //console.log('Add ' + $('li.ss-uploadfield-item').length);
-                if($('li.ss-uploadfield-item').length < 2) {
-                    $('div.field.dropdown.sorter').hide();
-                } else {
+                if($('li.ss-uploadfield-item').length > 1) {
                     $('div.field.dropdown.sorter').show();
                 }
                 this._super();
             },
             onremove: function() {
-                //console.log('Remove' + ( $('li.ss-uploadfield-item').length-1 ));
-                if($('li.ss-uploadfield-item').length -1 < 2) {
-                    $('div.field.dropdown.sorter').hide();
-                } else {
-                    $('div.field.dropdown.sorter').show();
-                }
                 this._super();
+                //console.log('Remove' + ( $('li.ss-uploadfield-item').length-1 ));
+                if($('li.ss-uploadfield-item').length -1 < 2 && $('li.ss-uploadfield-item').length -1 > 0) {
+                    $('div.field.dropdown.sorter').hide();
+                }
             }
         });
 

@@ -1,0 +1,4 @@
+/* Hide sorter on page initialization */
+.sorterdir.hidden, .sorter.hidden {
+    display: none;
+}

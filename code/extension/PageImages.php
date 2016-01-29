@@ -88,6 +88,7 @@ class PageImages extends DataExtension
     {
         if ($this->owner->ShowImages) {
 
+            Requirements::css(PAGEIMAGES_DIR . '/css/pageimages.css');
             Requirements::javascript(PAGEIMAGES_DIR . '/javascript/PageImages.js');
 
             // Obtain selected folder ID - if nothing selected yet -> 0 !
@@ -158,10 +159,20 @@ class PageImages extends DataExtension
             $dropdownSorter = DropdownField::create('Sorter', _t("PageImages.IMAGESSORTER", "Sort imags by: "))->setSource($this->owner->dbObject('Sorter')->enumValues($this->class));
             // Add additional class for jquery selector
             $dropdownSorter->addExtraClass('sorter');
+            // Add additional class to hide (dropdownSorter) div
+            SS_Log::log("images = ".$this->owner->Images()->count(), SS_Log::WARN);
+            if ($this->owner->Images()->count() < 2) {
+                $dropdownSorter->addExtraClass('hidden');
+            }
+
             // Create a dropdown using SorterDir
             $dropdownSorterDir = DropdownField::create('SorterDir', _t("PageImages.IMAGESSORTERDIR", "Sort direction: "))->setSource($this->owner->dbObject('SorterDir')->enumValues($this->class));
             // Add additional class for jquery selector
             $dropdownSorterDir->addExtraClass('sorterdir');
+            // Add additional class to hide (dropdownSorterDir) div
+            if ($this->owner->Sorter == "SortOrder") {
+                $dropdownSorterDir->addExtraClass('hidden');
+            }
 
             // Show a notice about SortabeUploadField
             if ($this->owner->Sorter == "SortOrder") {
