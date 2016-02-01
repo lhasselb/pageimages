@@ -1,15 +1,32 @@
 /**
  * File: PageImages.js
+ * ========================================
+ * Add features to cms backend
+ *
+ * @author guggelimehl [at] gmail.com
+ * @package pageimages
  */
 
 (function($) {
     $.entwine('ss', function($) {
 
         var sortedList = function (list, attr, dir) {
+            // Database ID matches to fileid within UploadField.ss template
+            attr = (attr == 'id') ? 'fileid' : attr;
             //console.log('sorter=' + attr + ', dir=' + dir);
             list.sort(function(a,b) {
                 // Compare integer
-                if(attr =='size') {
+                if(attr == 'fileid') {
+                    //console.log('a=' + $(a).data(attr) + ', b=' + $(b).data(attr) );
+                    if(dir =='asc') {
+                            return ( $(a).data(attr) - $(b).data(attr) );
+                    } else {
+                            return ( $(b).data(attr) - $(a).data(attr) );
+                    }
+                }
+                // Cast String to integer (example: 480 KB will be casted to 480 )
+                else if(attr =='imagesize') {
+                    //console.log('a=' + $(a).data(attr) + ', b=' + $(b).data(attr) );
                     if(dir =='asc') {
                             return (parseInt( ($(a).data(attr)).slice(0,-3), 10 ) - parseInt( ($(b).data(attr)).slice(0,-3), 10 ));
                     } else {
@@ -26,10 +43,26 @@
             });
             return list;
         };
+
+        /**
+         * Class: ul.ss-uploadfield-files.files
+         *
+         * Sort list by selected image attribute (title, name, fileID, size) and sort direction (asc, desc)
+         */
+        $('ul.ss-uploadfield-files.files').entwine({
+            onmatch: function() {
+                var sorter = $('select.dropdown.sorter').val().toLowerCase();
+                var sorterdir = $('select.dropdown.sorterdir').val().toLowerCase();
+                var imagesList = $('ul.ss-uploadfield-files.files li');
+                this.html(sortedList(imagesList,sorter,sorterdir));
+                // this._super();
+            }
+        });
+
         /**
          * Class: select.dropdown.sorter
          *
-         * Sort list by selected image attribute (title, name, fileID, size)
+         * Sort list on "CHANGE" of selected attribute (title, name, fileID, size)
          */
         $('select.dropdown.sorter').entwine({
             onchange: function() {
@@ -49,7 +82,7 @@
         /**
          * Class: select.dropdown.sorterdir
          *
-         * Sort list by selected sort direction (asc, desc)
+         * Sort list on "CHANGE" of selected sort direction (asc, desc)
          */
         $('select.dropdown.sorterdir').entwine({
             onchange: function() {
@@ -64,7 +97,7 @@
         /**
          * Class: div.ss-upload .ss-uploadfield-files .ss-uploadfield-item
          *
-         * Hide sorter field(s) for 0 or 1 image on adding or removing an image
+         * Hide/Show sorter and direction dropdown for 0 or 1 image on adding or removing an image
          */
         $('div.ss-upload .ss-uploadfield-files li.ss-uploadfield-item').entwine({
             onadd: function() {

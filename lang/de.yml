@@ -1,4 +1,5 @@
 de:
+# PageImages translation
   PageImages:
     IMAGESSORTER: "Sortieren nach: "
     IMAGESSORTERDIR: "Sortierrichtung: "
@@ -9,11 +10,16 @@ de:
     IMAGETAB: "Bilder"
     SHOWIMAGES: "Zeige Tab Bilder auf dieser Seite?"
     CHOOSEIMAGEFOLDER: "Verzeichnis auswählen: "
-# Sorter (Enum) translations
-    SortOrder: "Wie hier gezeigt"
+# Sorter (Enum) translation
+    SortOrder: "Angezeigte Reihenfolge"
     Title: "Titel"
     Name: "Name"
-    FileID: "ID"
-    Size: "Größe"
+    ID: "ID (Reihenfolge in der Datenbank)"
+    ImageSize: "Größe"
+# SorterDir (Enum) translation
     ASC: "Aufsteigend"
     DESC: "Absteigend"
+# PageImage translation
+  PageImage:
+    TITLE: "Titel"
+    CAPTION: "Bildunterschrift"

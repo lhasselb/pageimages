@@ -39,3 +39,8 @@ Page:
 #BlogPost:
 #  extensions:
 #    - PageImages
+
+# Use pageimage to extend Object Image
+Image:
+  extensions:
+    - PageImage

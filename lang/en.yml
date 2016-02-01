@@ -1,4 +1,5 @@
 en:
+# PageImages translation
   PageImages:
     IMAGESSORTER: "Sort imags by: "
     IMAGESSORTERDIR: "Sort direction: "
@@ -13,7 +14,12 @@ en:
     SortOrder: "Displayed order"
     Title: "Title"
     Name: "Name"
-    FileID: "ID"
-    Size: "Size"
+    ID: "ID (Database order)"
+    ImageSize: "Size"
+# SorterDir (Enum) translation
     ASC: "Ascending"
     DESC: "Descending"
+# PageImage translation
+  PageImage:
+    TITLE: "Title"
+    CAPTION: "Caption"

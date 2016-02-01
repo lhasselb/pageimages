@@ -16,12 +16,12 @@
 class PageImages extends DataExtension
 {
 
-    // Add 2 columns to table page (ShowImages, Sorter)
+    // Add 3 columns to table page (ShowImages, Sorter)
     private static $db = array(
         // Store if images tab should be shown
         'ShowImages' => 'Boolean(1)',
         // Store sort attribute used
-        'Sorter' => 'i18nEnum("SortOrder, Title, Name, FileID, Size")',
+        'Sorter' => 'i18nEnum("SortOrder, Title, Name, ID, ImageSize")',
         // Store sort direction
         'SorterDir' => 'i18nEnum("ASC, DESC")'
     );
@@ -59,7 +59,7 @@ class PageImages extends DataExtension
     /**
      * @config @var int max number of images allowed
      */
-    private static $image_count_limit = 5;
+    private static $image_count_limit = 15;
 
     /**
      * @config @var bool is image upload possible?
@@ -142,7 +142,7 @@ class PageImages extends DataExtension
             if (! empty($allowed_extensions))
                 $imageField->getValidator()->allowedExtensions = $allowed_extensions;
 
-                // Set allowed max filesize
+            // Set allowed max filesize
             $imageField->getValidator()->setAllowedMaxFileSize($allowed_max_file_size);
             // Replace an existing file rather than renaming the new one.
             $imageField->getUpload()->setReplaceFile(true);
@@ -154,13 +154,14 @@ class PageImages extends DataExtension
                 'extensions' => implode(",", $imageField->getAllowedExtensions()),
                 'size' => $allowed_max_file_size / 1024 / 1024
             )));
+            // Alter the editable fields
+            $imageField->setFileEditFields('getCustomFields');
 
             // Create a dropdown using Sorter
             $dropdownSorter = DropdownField::create('Sorter', _t("PageImages.IMAGESSORTER", "Sort imags by: "))->setSource($this->owner->dbObject('Sorter')->enumValues($this->class));
             // Add additional class for jquery selector
             $dropdownSorter->addExtraClass('sorter');
             // Add additional class to hide (dropdownSorter) div
-            SS_Log::log("images = ".$this->owner->Images()->count(), SS_Log::WARN);
             if ($this->owner->Images()->count() < 2) {
                 $dropdownSorter->addExtraClass('hidden');
             }
@@ -170,7 +171,7 @@ class PageImages extends DataExtension
             // Add additional class for jquery selector
             $dropdownSorterDir->addExtraClass('sorterdir');
             // Add additional class to hide (dropdownSorterDir) div
-            if ($this->owner->Sorter == "SortOrder") {
+            if ($this->owner->Images()->count() < 2 || $this->owner->Sorter == "SortOrder") {
                 $dropdownSorterDir->addExtraClass('hidden');
             }
 
@@ -211,6 +212,30 @@ class PageImages extends DataExtension
     }
 
     /**
+     * Updates the Image.Size database column of image objects when page is saved
+     *
+     * @return void
+     */
+    function onAfterWrite() {
+        parent::onAfterWrite();
+        // Update Image.Size database fields of all images assigned to actual page if image sort option is set "Size"
+        if ($this->owner->Sorter == "ImageSize")
+        {
+            PageImage::writeSize($this->owner->Folder()->ID);
+        }
+    }
+
+    function onBeforeWrite() {
+        parent::onBeforeWrite();
+        // Set default Sorter if all images have been removed
+        if ($this->owner->Images()->count() == 0)
+        {
+            $this->owner->Sorter = "SortOrder";
+            $this->owner->SorterDir = "ASC";
+        }
+    }
+
+    /**
      * updateSettingsFields add a field to the CMS interface
      *
      * @param FieldList $fields
@@ -232,7 +257,24 @@ class PageImages extends DataExtension
      */
     public function SortedImages()
     {
-        return $this->owner->Images()->Sort($this->owner->Sorter);
+        /*
+        SS_Log::log("sorter = ".$this->owner->Sorter, SS_Log::WARN);
+        SS_Log::log("sorterdir = ".$this->owner->SorterDir, SS_Log::WARN);
+        SS_Log::log("Images = ".$this->owner->Images()->count(), SS_Log::WARN);
+        $images = $this->owner->Images()->Sort($this->owner->Sorter,$this->owner->SorterDir);
+        foreach($images as $image)
+        {
+            SS_Log::log("Image Title= ".$image->getTitle().' Name='.$image->Name.' ID='.$image->ID.' Size='.$image->ImageSize.' Size='.$image->getSize(), SS_Log::WARN);
+        }
+        */
+        if($this->owner->Sorter == "SortOrder")
+        {
+            return $this->owner->Images()->Sort($this->owner->Sorter);
+        }
+        else
+        {
+            return $this->owner->Images()->Sort($this->owner->Sorter,$this->owner->SorterDir);
+        }
     }
 
     /**
@@ -240,7 +282,7 @@ class PageImages extends DataExtension
      *
      * @return PageImages
      */
-    public function MainImage()
+    public function FirstImage()
     {
         return $this->owner->Images()
             ->Sort($this->owner->Sorter)
