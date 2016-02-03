@@ -55,7 +55,10 @@
                 var sorterdir = $('select.dropdown.sorterdir').val().toLowerCase();
                 var imagesList = $('ul.ss-uploadfield-files.files li');
                 this.html(sortedList(imagesList,sorter,sorterdir));
-                // this._super();
+                this._super();
+            },
+            onunmatch: function() {
+                this._super();
             }
         });
 
@@ -101,17 +104,19 @@
          */
         $('div.ss-upload .ss-uploadfield-files li.ss-uploadfield-item').entwine({
             onadd: function() {
-                //console.log('Add ' + $('li.ss-uploadfield-item').length);
                 if($('li.ss-uploadfield-item').length > 1) {
                     $('div.field.dropdown.sorter').show();
+                    if($('select.dropdown.sorter').val().toLowerCase()!='sortorder') {
+                        $('div.field.dropdown.sorterdir').show();
+                    }
                 }
                 this._super();
             },
             onremove: function() {
                 this._super();
-                //console.log('Remove' + ( $('li.ss-uploadfield-item').length-1 ));
-                if($('li.ss-uploadfield-item').length -1 < 2 && $('li.ss-uploadfield-item').length -1 > 0) {
+                if($('li.ss-uploadfield-item').length-1 < 2 && $('li.ss-uploadfield-item').length-1 > 0) {
                     $('div.field.dropdown.sorter').hide();
+                    $('div.field.dropdown.sorterdir').hide();
                 }
             }
         });

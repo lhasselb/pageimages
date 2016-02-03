@@ -27,20 +27,12 @@ PageImages:
 # Default = 1048576 = 1MB (1* 1024 * 1024)
 #  allowed_max_file_size: 1048576
 
-# Use pageimages to extend DataObject Page
-# To disable the extension for all pages - DataObject Page
-# comment out the following:
+# Extend DataObject Page
 Page:
   extensions:
     - PageImages
 
-# To enable the extension for Blog pages - DataObject BlogPost
-# add the following to mysite/_config/config.yml:
-#BlogPost:
-#  extensions:
-#    - PageImages
-
-# Use pageimage to extend Object Image
+# Extend Object Image
 Image:
   extensions:
     - PageImage

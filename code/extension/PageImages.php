@@ -16,7 +16,7 @@
 class PageImages extends DataExtension
 {
 
-    // Add 3 columns to table page (ShowImages, Sorter)
+    // Add 3 columns to [OWNER] table
     private static $db = array(
         // Store if images tab should be shown
         'ShowImages' => 'Boolean(1)',
@@ -26,13 +26,13 @@ class PageImages extends DataExtension
         'SorterDir' => 'i18nEnum("ASC, DESC")'
     );
 
-    // Add a column to table page (FolderID)
+    // Add column FolderID to [OWNER] table
     private static $has_one = array(
         // Store selected folder
         'Folder' => 'Folder'
     );
 
-    // Create a relation table page_images
+    // Create a relation table [OWNER]_images
     private static $many_many = array(
         // Multiple images in several places
         'Images' => 'Image'
@@ -80,9 +80,7 @@ class PageImages extends DataExtension
 
     /**
      * Add an additional tab in the CMS interface
-     *
-     * @param
-     *            FieldSet
+     * @param FieldList
      */
     public function updateCMSFields(FieldList $fields)
     {
@@ -91,13 +89,26 @@ class PageImages extends DataExtension
             Requirements::css(PAGEIMAGES_DIR . '/css/pageimages.css');
             Requirements::javascript(PAGEIMAGES_DIR . '/javascript/PageImages.js');
 
+            foreach($fields as $field)
+            {
+                SS_Log::log("field = ".$field.' Name='.$field->Name, SS_Log::WARN);
+                if($field->Name =='Root') {
+                    $fieldList = $field->FieldList();
+                    foreach($fieldList as $field) {
+                        SS_Log::log('fieldlist = '.$field, SS_Log::WARN);
+                    }
+
+                }
+            }
+
+
             // Obtain selected folder ID - if nothing selected yet -> 0 !
             $selectedFolderPathNameId = $this->owner->Folder()->ID;
 
             // Obtain folder name
             $upload_folder_name = Config::inst()->get('PageImages', 'upload_folder_name');
 
-            // Obtain configured limit from configuration or fallback to 5
+            // Obtain configured limit from configuration or fallback to 15
             $image_count_limit = Config::inst()->get('PageImages', 'image_count_limit');
 
             // Obtain if images can be uploaded (if not they can be selected only)
@@ -110,10 +121,27 @@ class PageImages extends DataExtension
             $allowed_max_file_size = Config::inst()->get('PageImages', 'allowed_max_file_size');
 
             // Use SortableUploadField instead of UploadField (if available)!
-            $uploadClass = (class_exists("SortableUploadField") && $this->owner->Sorter == "SortOrder") ? "SortableUploadField" : "UploadField";
+            //$uploadClass = (class_exists("SortableUploadField") && $this->owner->Sorter == "SortOrder") ? "SortableUploadField" : "UploadField";
 
             // Create a sortable uploadfield called imageField with an translateable name (default name "Images")
-            $imageField = $uploadClass::create('Images', _t("PageImages.IMAGESUPLOADLABEL", "Images"));
+            $imageField = SortableUploadField::create('Images', _t("PageImages.IMAGESUPLOADLABEL", "Images"));
+/*
+            $imageField->setRecord($this->owner);
+            $imageField->setItems($this->owner->Images());
+
+            SS_Log::log("PI record = ".$imageField->getRecord(), SS_Log::WARN);
+            $items = $imageField->getItems();
+            foreach($items as $item)
+            {
+                SS_Log::log("PI Image Title= ".$item->getTitle().' Name='.$item->Name, SS_Log::WARN);
+            }
+
+            $components = $this->owner->getManyManyComponents('Images');
+            foreach($components as $component)
+            {
+                SS_Log::log("component= ".$component.' Name='.$component->Name, SS_Log::WARN);
+            }
+*/
 
             // Obtain user selected folder
             if ($selectedFolderPathNameId != 0) {
@@ -225,6 +253,11 @@ class PageImages extends DataExtension
         }
     }
 
+    /**
+     * Updates the Page.Sorter & SorterDir database column of page objects before page is saved
+     *
+     * @return void
+     */
     function onBeforeWrite() {
         parent::onBeforeWrite();
         // Set default Sorter if all images have been removed
@@ -234,6 +267,7 @@ class PageImages extends DataExtension
             $this->owner->SorterDir = "ASC";
         }
     }
+
 
     /**
      * updateSettingsFields add a field to the CMS interface

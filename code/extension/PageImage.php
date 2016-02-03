@@ -17,6 +17,10 @@ class PageImage extends DataExtension  {
         'Caption' => 'Text'
     );
 
+    private static $belongs_many_many = array(
+        'Pagees' => 'Page'
+    );
+
     /**
      *
      */
