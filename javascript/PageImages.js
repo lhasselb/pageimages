@@ -45,11 +45,11 @@
         };
 
         /**
-         * Class: ul.ss-uploadfield-files.files
+         * Class: #Form_EditForm_Images_Holder ul.ss-uploadfield-files.files
          *
          * Sort list by selected image attribute (title, name, fileID, size) and sort direction (asc, desc)
          */
-        $('ul.ss-uploadfield-files.files').entwine({
+        $('#Form_EditForm_Images_Holder ul.ss-uploadfield-files.files').entwine({
             onmatch: function() {
                 var sorter = $('select.dropdown.sorter').val().toLowerCase();
                 var sorterdir = $('select.dropdown.sorterdir').val().toLowerCase();
@@ -72,13 +72,13 @@
                 var sorter = this.val().toLowerCase();
                 var sorterdir = $('select.dropdown.sorterdir').val().toLowerCase();
                 if ( sorter!= 'sortorder') {
-                    var imagesList = $('ul.ss-uploadfield-files.files li');
+                    var imagesList = $('#Form_EditForm_Images_Holder ul.ss-uploadfield-files.files li');
                     $('ul.ss-uploadfield-files.files').html(sortedList(imagesList,sorter,sorterdir));
                     $('div.field.dropdown.sorterdir').show();
                 } else {
                     $('div.field.dropdown.sorterdir').hide();
                 }
-                //this._super();
+                this._super();
             }
         });
 
@@ -91,9 +91,9 @@
             onchange: function() {
                 var sorterdir = this.val().toLowerCase();
                 var sorter = $('select.dropdown.sorter').val().toLowerCase();
-                var imagesList = $('ul.ss-uploadfield-files.files li');
+                var imagesList = $('#Form_EditForm_Images_Holder ul.ss-uploadfield-files.files li');
                 $('ul.ss-uploadfield-files.files').html(sortedList(imagesList,sorter,sorterdir));
-                //this._super();
+                this._super();
             }
         });
 
@@ -121,5 +121,17 @@
             }
         });
 
+        $('input#Form_EditForm_ShowImages').entwine({
+            onchange: function() {
+                //console.log(this);
+                var label = $('label.fieldholder-small-label[for=Form_EditForm_MaxImages]');
+                if ($('input#Form_EditForm_ShowImages').is(':checked')) {
+                    label.closest('.fieldgroup-field').show();
+                } else {
+                    label.closest('.fieldgroup-field').hide();
+                }
+                this._super();
+            }
+        });
     });
 }(jQuery));

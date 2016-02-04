@@ -23,7 +23,9 @@ class PageImages extends DataExtension
         // Store sort attribute used
         'Sorter' => 'i18nEnum("SortOrder, Title, Name, ID, ImageSize")',
         // Store sort direction
-        'SorterDir' => 'i18nEnum("ASC, DESC")'
+        'SorterDir' => 'i18nEnum("ASC, DESC")',
+        // Store max number of images
+        'MaxImages' => 'Int(10)'
     );
 
     // Add column FolderID to [OWNER] table
@@ -41,8 +43,7 @@ class PageImages extends DataExtension
     /**
      * Add the SortOrder field to the relation table for SortableUploadField.
      * DO NOT CHANGE the field name SortOrder (required by sortablefile)!
-     * Please note that the key (in this case 'Images')
-     * has to be the same key as in the $many_many definition!
+     * Please note that the key (in this case 'Images') has to be the same key as in the $many_many definition!
      */
     private static $many_many_extraFields = array(
         // Store sorting
@@ -57,11 +58,6 @@ class PageImages extends DataExtension
     private static $upload_folder_name = "Uploads";
 
     /**
-     * @config @var int max number of images allowed
-     */
-    private static $image_count_limit = 15;
-
-    /**
      * @config @var bool is image upload possible?
      */
     private static $can_upload = true;
@@ -69,7 +65,7 @@ class PageImages extends DataExtension
     /**
      * @config @var array list of allowed extensions
      */
-    private static $allowed_extensions = [];
+    private static $allowed_extensions = array("jpg", "jpeg", "gif", "png");
     // Empty because we're defaulting to category image
 
     /**
@@ -84,32 +80,17 @@ class PageImages extends DataExtension
      */
     public function updateCMSFields(FieldList $fields)
     {
+
+        Requirements::css(PAGEIMAGES_DIR . '/css/PageImages.css');
+        Requirements::javascript(PAGEIMAGES_DIR . '/javascript/PageImages.js');
+
         if ($this->owner->ShowImages) {
-
-            Requirements::css(PAGEIMAGES_DIR . '/css/pageimages.css');
-            Requirements::javascript(PAGEIMAGES_DIR . '/javascript/PageImages.js');
-
-            foreach($fields as $field)
-            {
-                SS_Log::log("field = ".$field.' Name='.$field->Name, SS_Log::WARN);
-                if($field->Name =='Root') {
-                    $fieldList = $field->FieldList();
-                    foreach($fieldList as $field) {
-                        SS_Log::log('fieldlist = '.$field, SS_Log::WARN);
-                    }
-
-                }
-            }
-
 
             // Obtain selected folder ID - if nothing selected yet -> 0 !
             $selectedFolderPathNameId = $this->owner->Folder()->ID;
 
             // Obtain folder name
             $upload_folder_name = Config::inst()->get('PageImages', 'upload_folder_name');
-
-            // Obtain configured limit from configuration or fallback to 15
-            $image_count_limit = Config::inst()->get('PageImages', 'image_count_limit');
 
             // Obtain if images can be uploaded (if not they can be selected only)
             $can_upload = Config::inst()->get('PageImages', 'can_upload');
@@ -120,28 +101,8 @@ class PageImages extends DataExtension
             // Obtain max alowed file size for image uploads
             $allowed_max_file_size = Config::inst()->get('PageImages', 'allowed_max_file_size');
 
-            // Use SortableUploadField instead of UploadField (if available)!
-            //$uploadClass = (class_exists("SortableUploadField") && $this->owner->Sorter == "SortOrder") ? "SortableUploadField" : "UploadField";
-
             // Create a sortable uploadfield called imageField with an translateable name (default name "Images")
             $imageField = SortableUploadField::create('Images', _t("PageImages.IMAGESUPLOADLABEL", "Images"));
-/*
-            $imageField->setRecord($this->owner);
-            $imageField->setItems($this->owner->Images());
-
-            SS_Log::log("PI record = ".$imageField->getRecord(), SS_Log::WARN);
-            $items = $imageField->getItems();
-            foreach($items as $item)
-            {
-                SS_Log::log("PI Image Title= ".$item->getTitle().' Name='.$item->Name, SS_Log::WARN);
-            }
-
-            $components = $this->owner->getManyManyComponents('Images');
-            foreach($components as $component)
-            {
-                SS_Log::log("component= ".$component.' Name='.$component->Name, SS_Log::WARN);
-            }
-*/
 
             // Obtain user selected folder
             if ($selectedFolderPathNameId != 0) {
@@ -157,14 +118,16 @@ class PageImages extends DataExtension
                 $imageField->setDisplayFolderName($upload_folder_name);
             }
 
-            // Set configuration parameter "allowedMaxFileNumber" to $image_count_limit
-            $imageField->setConfig('allowedMaxFileNumber', $image_count_limit);
+             SS_Log::log("max images = ".$this->owner->MaxImages, SS_Log::WARN);
+             $image_count_limit = $this->owner->MaxImages;
+            // Set configuration parameter "allowedMaxFileNumber"
+            $imageField->setConfig('allowedMaxFileNumber', $this->owner->MaxImages);
 
             // Set can upload
             if ($can_upload == '0' || $can_upload == false)
                 $imageField->setCanUpload(false);
 
-                // Set allowed file type(s) to category image
+            // Set allowed file type(s) to category image
             $imageField->setAllowedFileCategories('image');
             // Further limiting if set
             if (! empty($allowed_extensions))
@@ -203,17 +166,10 @@ class PageImages extends DataExtension
                 $dropdownSorterDir->addExtraClass('hidden');
             }
 
-            // Show a notice about SortabeUploadField
-            if ($this->owner->Sorter == "SortOrder") {
-                $imageNotice = (class_exists("SortableUploadField")) ? ""/*_t("PageImages.IMAGESNOTICE", "<span style='color: green'>Sort images by draging thumbnail</span>")*/ :
-                _t("PageImages.IMAGESNOTICEWRONG", "<span style='color: red'>Sorting images by draging thumbnails (SortOrder) not allowed. Missing module SortabeUploadField.</span>");
-            } else {
-                $imageNotice = ""; // _t("PageImages.IMAGESSORTERNOTICE", "Correct image sorting is visible on frontend only (if Sort by = Title, ID, Name)");
-            }
-
             // Important: Use propertyID as reference name to store the selected value
             // Info: A click on the selected folder within the interface will reset or better unset!
-            $selectFolderTreedropdown = new TreeDropdownField('FolderID', _t("PageImages.CHOOSEIMAGEFOLDER", "Choose Image Folder"), 'Folder');
+            $selectFolderTreedropdown = new TreeDropdownField('FolderID', _t("PageImages.CHOOSEIMAGEFOLDER", "Select folder (optional)"), 'Folder');
+            $selectFolderTreedropdown->setRightTitle( _t("PageImages.IMAGEFOLDERHINT", "Selected folder will be used for images below."));
 
             // Create a translatable tab title
             $imageTabTitle = 'Images';
@@ -224,16 +180,12 @@ class PageImages extends DataExtension
 
             // Create a new tab and place it after Main tab
             $fields->insertAfter(new Tab($imageTabTitle, $imageTabHeader), 'Main');
-
             // Add treedropdown to the tab
             $fields->addFieldToTab($imageTab, $selectFolderTreedropdown);
-            // Add a image notice to the tab
-            $fields->addFieldToTab($imageTab, HeaderField::create('ImagesNotice', $imageNotice)->setHeadingLevel(4));
             // Add dropdownsorter to the tab
             $fields->addFieldToTab($imageTab, $dropdownSorter);
             // Add dropdownsorter direction to the tab if not SortOrder (manual sort)
             $fields->addFieldToTab($imageTab, $dropdownSorterDir);
-
             // Add the sortableuploadfield to the tab
             $fields->addFieldToTab($imageTab, $imageField);
         }
@@ -277,11 +229,35 @@ class PageImages extends DataExtension
      */
     public function updateSettingsFields(FieldList $fields)
     {
-        $images_group = FieldGroup::create(CheckboxField::create("ShowImages", _t("PageImages.SHOWIMAGES", "Show tab images on this page?")))->setTitle(_t("PageImages.IMAGETAB", "Images"));
+        // Create a nested fieldgroup for images
+        $images_group = FieldGroup::create(
+            $checkboxField_group = FieldGroup::create(CheckboxField::create("ShowImages", _t("PageImages.SHOWIMAGES", "Show tab Images."))),
+            $numericField_group = FieldGroup::create(NumericField::create("MaxImages", _t("PageImages.MAXIMAGES", "Set max. images")))
+        )->setTitle(_t("PageImages.IMAGETAB", "Images"));
+        $checkboxField_group->setTitle('MaxImages');
+        if(!$this->owner->ShowImages) {
+            $numericField_group->addExtraClass('hidden');
+        }
 
+        // Add a information for the user
+        $images_group->setRightTitle(_t("PageImages.IMAGETABHINT", "Enable addional images for this page."));
+
+
+
+        // Add group to Root.Settings
         $fields->addFieldToTab("Root.Settings", $images_group);
 
         return $fields;
+    }
+
+    /**
+     * Return wheter enabled or not
+     *
+     * @return Boolean
+     */
+    public function isEnabled()
+    {
+        return $this->owner->ShowImages;
     }
 
     /**
@@ -291,16 +267,6 @@ class PageImages extends DataExtension
      */
     public function SortedImages()
     {
-        /*
-        SS_Log::log("sorter = ".$this->owner->Sorter, SS_Log::WARN);
-        SS_Log::log("sorterdir = ".$this->owner->SorterDir, SS_Log::WARN);
-        SS_Log::log("Images = ".$this->owner->Images()->count(), SS_Log::WARN);
-        $images = $this->owner->Images()->Sort($this->owner->Sorter,$this->owner->SorterDir);
-        foreach($images as $image)
-        {
-            SS_Log::log("Image Title= ".$image->getTitle().' Name='.$image->Name.' ID='.$image->ID.' Size='.$image->ImageSize.' Size='.$image->getSize(), SS_Log::WARN);
-        }
-        */
         if($this->owner->Sorter == "SortOrder")
         {
             return $this->owner->Images()->Sort($this->owner->Sorter);

@@ -6,10 +6,12 @@ en:
     IMAGESNOTICE: "<span style='color: green'>Sort images by draging thumbnail</span>"
     IMAGESNOTICEWRONG: "<span style='color: red'>Sorting images by draging thumbnails (SortOrder) not allowed. Missing module SortabeUploadField.</span>"
     IMAGESUPLOADLABEL: "Images"
-    IMAGESUPLOADLIMIT: "Up to {count} images ({extensions}) with a max. size of {size} MB per file."
+    IMAGESUPLOADLIMIT: "Up to {count} images of type {extensions} with a max. size of {size} MB per file."
     IMAGETAB: "Images"
-    SHOWIMAGES: "Show tab images on this page?"
-    CHOOSEIMAGEFOLDER: "Select image folder: "
+    SHOWIMAGES: "Show tab images."
+    IMAGETABHINT: "Enable addional images for this page."
+    CHOOSEIMAGEFOLDER: "Select folder (optional)"
+    IMAGEFOLDERHINT: "Selected folder will be used for images below."
 # Sorter (Enum) translation
     SortOrder: "Displayed order"
     Title: "Title"
@@ -23,3 +25,4 @@ en:
   PageImage:
     TITLE: "Title"
     CAPTION: "Caption"
+    CAPTIONHINT: "Plain text - no HTML tags."

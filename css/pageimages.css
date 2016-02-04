@@ -2,3 +2,8 @@
 .sorterdir.hidden, .sorter.hidden {
     display: none;
 }
+/* Hide pageimages settings */
+.CompositeField.fieldgroup.hidden
+{
+    display: none;
+}

@@ -3,10 +3,6 @@ Name: pageimages
 ---
 # pageimages configurable parameter(s):
 PageImages:
-# Set max amount of images.
-# Default = 5.
-#  image_count_limit: 5
-
 # Set a specific folder name to upload to
 # Default = Uploads
 #  upload_folder_name: 'Uploads'
@@ -36,3 +32,8 @@ Page:
 Image:
   extensions:
     - PageImage
+
+#Add some required styles to cms
+LeftAndMain:
+  extra_requirements_css:
+    - pageimages/css/PageImages.css

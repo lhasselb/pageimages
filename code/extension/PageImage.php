@@ -18,7 +18,7 @@ class PageImage extends DataExtension  {
     );
 
     private static $belongs_many_many = array(
-        'Pagees' => 'Page'
+        'Pages' => 'Page'
     );
 
     /**
@@ -27,7 +27,9 @@ class PageImage extends DataExtension  {
     function getCustomFields() {
         $fields = new FieldList();
         $fields->push(new TextField('Title', _t('PageImage.TITLE','Title') ) );
-        $fields->push(new TextareaField('Caption', _t('PageImage.CAPTION','Caption') ) );
+        $caption = new TextareaField('Caption', _t('PageImage.CAPTION','Caption'));
+        $caption->setRightTitle(_t('PageImage.CAPTIONHINT','Plain text - no HTML tags.'));
+        $fields->push($caption);
         return $fields;
     }
 

@@ -8,8 +8,10 @@ de:
     IMAGESUPLOADLABEL: "Bilder"
     IMAGESUPLOADLIMIT: "Maximal {count} Bilder der Typen {extensions} mit einer Größe von max. {size} MB pro Datei."
     IMAGETAB: "Bilder"
-    SHOWIMAGES: "Zeige Tab Bilder auf dieser Seite?"
-    CHOOSEIMAGEFOLDER: "Verzeichnis auswählen: "
+    SHOWIMAGES: "Zeige Karteireiter Bilder."
+    IMAGETABHINT: "Aktiviere zusätzliche Bilder auf dieser Seite."
+    CHOOSEIMAGEFOLDER: "Verzeichnis auswählen (optional)"
+    IMAGEFOLDERHINT:"Das gewählte Verzeichnis wird auf die Bilder unten angewandt."
 # Sorter (Enum) translation
     SortOrder: "Angezeigte Reihenfolge"
     Title: "Titel"
@@ -23,3 +25,4 @@ de:
   PageImage:
     TITLE: "Titel"
     CAPTION: "Bildunterschrift"
+    CAPTIONHINT: "Einfacher Text - kene HTML Tags."
