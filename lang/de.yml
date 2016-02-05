@@ -12,6 +12,7 @@ de:
     IMAGETABHINT: "Aktiviere zusätzliche Bilder auf dieser Seite."
     CHOOSEIMAGEFOLDER: "Verzeichnis auswählen (optional)"
     IMAGEFOLDERHINT:"Das gewählte Verzeichnis wird auf die Bilder unten angewandt."
+    MAXIMAGES: "Maximale Anzahl von Bildern auf dieser Seite:"
 # Sorter (Enum) translation
     SortOrder: "Angezeigte Reihenfolge"
     Title: "Titel"

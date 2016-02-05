@@ -7,10 +7,6 @@ PageImages:
 # Default = Uploads
 #  upload_folder_name: 'Uploads'
 
-# Avoid uploading images (select existing from assets)
-# Default = true
-#  can_upload: true
-
 # Set allowed extensions for images
 # Default to types known by file category image
 #  allowed_extensions:

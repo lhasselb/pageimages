@@ -25,7 +25,9 @@ class PageImages extends DataExtension
         // Store sort direction
         'SorterDir' => 'i18nEnum("ASC, DESC")',
         // Store max number of images
-        'MaxImages' => 'Int(10)'
+        'MaxImages' => 'Int(10)',
+        // Store if user can upload "external" images
+        'CanUpload' => 'Boolean(1)'
     );
 
     // Add column FolderID to [OWNER] table
@@ -58,11 +60,6 @@ class PageImages extends DataExtension
     private static $upload_folder_name = "Uploads";
 
     /**
-     * @config @var bool is image upload possible?
-     */
-    private static $can_upload = true;
-
-    /**
      * @config @var array list of allowed extensions
      */
     private static $allowed_extensions = array("jpg", "jpeg", "gif", "png");
@@ -81,7 +78,8 @@ class PageImages extends DataExtension
     public function updateCMSFields(FieldList $fields)
     {
 
-        Requirements::css(PAGEIMAGES_DIR . '/css/PageImages.css');
+        // CSS reference has been moved to config.yml
+        //Requirements::css(PAGEIMAGES_DIR . '/css/PageImages.css');
         Requirements::javascript(PAGEIMAGES_DIR . '/javascript/PageImages.js');
 
         if ($this->owner->ShowImages) {
@@ -91,14 +89,9 @@ class PageImages extends DataExtension
 
             // Obtain folder name
             $upload_folder_name = Config::inst()->get('PageImages', 'upload_folder_name');
-
-            // Obtain if images can be uploaded (if not they can be selected only)
-            $can_upload = Config::inst()->get('PageImages', 'can_upload');
-
             // Obtain alowed image extensions
             $allowed_extensions = Config::inst()->get('PageImages', 'allowed_extensions');
-
-            // Obtain max alowed file size for image uploads
+            // Obtain alowed max file size
             $allowed_max_file_size = Config::inst()->get('PageImages', 'allowed_max_file_size');
 
             // Create a sortable uploadfield called imageField with an translateable name (default name "Images")
@@ -118,21 +111,14 @@ class PageImages extends DataExtension
                 $imageField->setDisplayFolderName($upload_folder_name);
             }
 
-             SS_Log::log("max images = ".$this->owner->MaxImages, SS_Log::WARN);
-             $image_count_limit = $this->owner->MaxImages;
             // Set configuration parameter "allowedMaxFileNumber"
             $imageField->setConfig('allowedMaxFileNumber', $this->owner->MaxImages);
-
             // Set can upload
-            if ($can_upload == '0' || $can_upload == false)
-                $imageField->setCanUpload(false);
-
+            $imageField->setCanUpload((bool)$this->owner->CanUpload);
             // Set allowed file type(s) to category image
-            $imageField->setAllowedFileCategories('image');
-            // Further limiting if set
-            if (! empty($allowed_extensions))
-                $imageField->getValidator()->allowedExtensions = $allowed_extensions;
-
+            //$imageField->setAllowedFileCategories('image');
+            // Set allowed file type(s)
+            $imageField->getValidator()->allowedExtensions = $allowed_extensions;
             // Set allowed max filesize
             $imageField->getValidator()->setAllowedMaxFileSize($allowed_max_file_size);
             // Replace an existing file rather than renaming the new one.
@@ -141,7 +127,7 @@ class PageImages extends DataExtension
             $imageField->setOverwriteWarning(true);
             // Add a description to be displayed
             $imageField->setDescription(_t("PageImages.IMAGESUPLOADLIMIT", "Up to {count} images ({extensions}) with a max. size of {size} MB per file.", array(
-                'count' => $image_count_limit,
+                'count' => $this->owner->MaxImages,
                 'extensions' => implode(",", $imageField->getAllowedExtensions()),
                 'size' => $allowed_max_file_size / 1024 / 1024
             )));
@@ -232,15 +218,17 @@ class PageImages extends DataExtension
         // Create a nested fieldgroup for images
         $images_group = FieldGroup::create(
             $checkboxField_group = FieldGroup::create(CheckboxField::create("ShowImages", _t("PageImages.SHOWIMAGES", "Show tab Images."))),
-            $numericField_group = FieldGroup::create(NumericField::create("MaxImages", _t("PageImages.MAXIMAGES", "Set max. images")))
+            $numericField_group = FieldGroup::create(NumericField::create("MaxImages", _t("PageImages.MAXIMAGES", "Maximum images"))),
+            $checkboxField_group1 = FieldGroup::create(CheckboxField::create("CanUpload", _t("PageImages.CANUPLOAD", "Can upload.")))
         )->setTitle(_t("PageImages.IMAGETAB", "Images"));
+
         $checkboxField_group->setTitle('MaxImages');
         if(!$this->owner->ShowImages) {
             $numericField_group->addExtraClass('hidden');
         }
 
         // Add a information for the user
-        $images_group->setRightTitle(_t("PageImages.IMAGETABHINT", "Enable addional images for this page."));
+        $checkboxField_group->setRightTitle(_t("PageImages.IMAGETABHINT", "Enable addional images for this page."));
 
 
 

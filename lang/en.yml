@@ -12,6 +12,7 @@ en:
     IMAGETABHINT: "Enable addional images for this page."
     CHOOSEIMAGEFOLDER: "Select folder (optional)"
     IMAGEFOLDERHINT: "Selected folder will be used for images below."
+    MAXIMAGES: "Maximum images:"
 # Sorter (Enum) translation
     SortOrder: "Displayed order"
     Title: "Title"
