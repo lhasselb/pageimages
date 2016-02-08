@@ -3,7 +3,7 @@
 
 Add images to a DataObject
 
-Useful to add images to all pages or a specific DataObject like BlogPost
+Useful to add images to any page or inheritor like BlogPost
 (see [Blog](https://github.com/silverstripe/silverstripe-blog.git/ "Blog module") ) using an additional tab in the backend.
 
 Uses a has_one relation to assign a folder containing your images. Offers [UploadField] (https://docs.silverstripe.org/en/3.2/developer_guides/forms/field_types/uploadfield/) sorting using [sortablefile](https://github.com/bummzack/sortablefile).
