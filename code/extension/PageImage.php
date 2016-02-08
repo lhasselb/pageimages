@@ -1,15 +1,21 @@
 <?php
 
 /**
+ * Class PageImage
+ *
  * Extension to Image object.
  * ========================================
  * Extends SilverStripe image object to provide additional functionality.
  *
+ * @package silverstripe
+ * @subpackage pageimage
+ *
  * @author guggelimehl [at] gmail.com
- * @package pageimages
+ *
  */
 class PageImage extends DataExtension  {
 
+    // Add 2 columns to Image table
     private static $db = array(
         // Store Image size
         'ImageSize' => 'int',
@@ -17,12 +23,8 @@ class PageImage extends DataExtension  {
         'Caption' => 'Text'
     );
 
-    private static $belongs_many_many = array(
-        'Pages' => 'Page'
-    );
-
     /**
-     *
+     * {@inheritdoc}
      */
     function getCustomFields() {
         $fields = new FieldList();
@@ -65,3 +67,5 @@ class PageImage extends DataExtension  {
     }
 
 }
+
+// EOF

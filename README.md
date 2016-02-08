@@ -17,7 +17,7 @@ Uses a has_one relation to assign a folder containing your images. Offers [Uploa
 
 ## Configuration
 By default the extension is enabled for DataObject Page.
-You can add the extension to other modules like the Blog module by changing the configuration.
+You can add the extension to other DataObject by changing the configuration.
 See file "config.yml" within "/SS_ROOT/pageimages/_config" folder.
 ```
 Page:
@@ -26,30 +26,12 @@ Page:
 ```
 Read more about [silverstripe configuration](http://doc.silverstripe.com/framework/en/topics/configuration).
 
-### HowTo enable images for blog pages
-Add the following to your config.yml within "/SS_ROOT/mysite/_config"
-```
-BlogPost:
-  extensions:
-    - PageImages
-```
-You'll also need to run `dev/build`.
-
-
 ## Configurable parameter(s) available in config.yml.
 If a parameter is not set, default value will be used:
 ```
-# Set max amount of images.
-# Default = 5.
-#  image_count_limit: 5
-
 # Set a specific folder name to upload to
 # Default = Uploads
 #  upload_folder_name: 'Uploads'
-
-# Avoid uploading images (select existing from assets)
-# Default = true
-#  can_upload: true
 
 # Set allowed extensions for images
 # Default to types known by file category image

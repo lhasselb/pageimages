@@ -3,8 +3,11 @@
  * ========================================
  * Add features to cms backend
  *
+ * @package silverstripe
+ * @subpackage pageimage
+ *
  * @author guggelimehl [at] gmail.com
- * @package pageimages
+ *
  */
 
 (function($) {
@@ -55,9 +58,6 @@
                 var sorterdir = $('select.dropdown.sorterdir').val().toLowerCase();
                 var imagesList = $('ul.ss-uploadfield-files.files li');
                 this.html(sortedList(imagesList,sorter,sorterdir));
-                this._super();
-            },
-            onunmatch: function() {
                 this._super();
             }
         });
@@ -121,9 +121,13 @@
             }
         });
 
+        /**
+         * Class: input#Form_EditForm_ShowImages
+         *
+         * Hide/Show pageimage settings
+         */
         $('input#Form_EditForm_ShowImages').entwine({
             onchange: function() {
-                //console.log(this);
                 var label = $('label.fieldholder-small-label[for=Form_EditForm_MaxImages]');
                 if ($('input#Form_EditForm_ShowImages').is(':checked')) {
                     label.closest('.fieldgroup-field').show();
@@ -133,5 +137,6 @@
                 this._super();
             }
         });
+
     });
 }(jQuery));

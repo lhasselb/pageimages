@@ -3,16 +3,15 @@ en:
   PageImages:
     IMAGESSORTER: "Sort imags by: "
     IMAGESSORTERDIR: "Sort direction: "
-    IMAGESNOTICE: "<span style='color: green'>Sort images by draging thumbnail</span>"
-    IMAGESNOTICEWRONG: "<span style='color: red'>Sorting images by draging thumbnails (SortOrder) not allowed. Missing module SortabeUploadField.</span>"
     IMAGESUPLOADLABEL: "Images"
     IMAGESUPLOADLIMIT: "Up to {count} images of type {extensions} with a max. size of {size} MB per file."
     IMAGETAB: "Images"
-    SHOWIMAGES: "Show tab images."
-    IMAGETABHINT: "Enable addional images for this page."
-    CHOOSEIMAGEFOLDER: "Select folder (optional)"
-    IMAGEFOLDERHINT: "Selected folder will be used for images below."
-    MAXIMAGES: "Maximum images:"
+    IMAGETABHINT: "Will show tab Images"
+    SHOWIMAGES: "Enable pageimages?"
+    CANUPLOAD: "User can Upload images?"
+    MAXIMAGES: "Maximum number of images"
+    CHOOSEIMAGEFOLDER: "Preselect folder"
+
 # Sorter (Enum) translation
     SortOrder: "Displayed order"
     Title: "Title"

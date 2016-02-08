@@ -1,17 +1,20 @@
 <?php
 
 /**
+ * Class PageImages
+ *
  * Extension to enable images on a DataObject.
  * ========================================
- * This class adds image support to DataObjects, allowing you to tick "Show tab images on this page"
- * under the settings pane.
  * Decorate DataObject with a booloan (is image tab enabled?)
  * and an enum for a sort and sort direction dropdown as i18Enum.
  * Enum has been replaced by i18nEnum to enable translation.
  * Use 'ShowImages' => 'Boolean(1)' for enabling images by default.
  *
+ * @package silverstripe
+ * @subpackage pageimages
+ *
  * @author guggelimehl [at] gmail.com
- * @package pageimages
+ *
  */
 class PageImages extends DataExtension
 {
@@ -57,12 +60,12 @@ class PageImages extends DataExtension
     /**
      * @config @var string upload folder name used to store/load images
      */
-    private static $upload_folder_name = "Uploads";
+    private static $upload_folder_name = 'Uploads';
 
     /**
      * @config @var array list of allowed extensions
      */
-    private static $allowed_extensions = array("jpg", "jpeg", "gif", "png");
+    private static $allowed_extensions = array('jpg', 'jpeg', 'gif', 'png');
     // Empty because we're defaulting to category image
 
     /**
@@ -72,8 +75,7 @@ class PageImages extends DataExtension
     // 1 MB in bytes;
 
     /**
-     * Add an additional tab in the CMS interface
-     * @param FieldList
+     * {@inheritdoc}
      */
     public function updateCMSFields(FieldList $fields)
     {
@@ -89,17 +91,19 @@ class PageImages extends DataExtension
 
             // Obtain folder name
             $upload_folder_name = Config::inst()->get('PageImages', 'upload_folder_name');
+
             // Obtain alowed image extensions
             $allowed_extensions = Config::inst()->get('PageImages', 'allowed_extensions');
+
             // Obtain alowed max file size
             $allowed_max_file_size = Config::inst()->get('PageImages', 'allowed_max_file_size');
 
-            // Create a sortable uploadfield called imageField with an translateable name (default name "Images")
-            $imageField = SortableUploadField::create('Images', _t("PageImages.IMAGESUPLOADLABEL", "Images"));
+            // Create a sortable uploadfield called imageField with an translateable name (default name 'Images')
+            $imageField = SortableUploadField::create('Images', _t('PageImages.IMAGESUPLOADLABEL', 'Images'));
 
             // Obtain user selected folder
             if ($selectedFolderPathNameId != 0) {
-                // Trim leading "/assets/" for selected folder
+                // Trim leading '/assets/' for selected folder
                 $selectedFolderPathName = ltrim($this->owner->Folder()->getRelativePath(), '/assets/');
                 // Not 0, use selected folder
                 $imageField->setFolderName($selectedFolderPathName);
@@ -111,7 +115,7 @@ class PageImages extends DataExtension
                 $imageField->setDisplayFolderName($upload_folder_name);
             }
 
-            // Set configuration parameter "allowedMaxFileNumber"
+            // Set configuration parameter 'allowedMaxFileNumber'
             $imageField->setConfig('allowedMaxFileNumber', $this->owner->MaxImages);
             // Set can upload
             $imageField->setCanUpload((bool)$this->owner->CanUpload);
@@ -126,16 +130,16 @@ class PageImages extends DataExtension
             // Warning before overwriting existing file (only relevant when Upload: replaceFile is true)
             $imageField->setOverwriteWarning(true);
             // Add a description to be displayed
-            $imageField->setDescription(_t("PageImages.IMAGESUPLOADLIMIT", "Up to {count} images ({extensions}) with a max. size of {size} MB per file.", array(
+            $imageField->setDescription(_t('PageImages.IMAGESUPLOADLIMIT', 'Up to {count} images ({extensions}) with a max. size of {size} MB per file.', array(
                 'count' => $this->owner->MaxImages,
-                'extensions' => implode(",", $imageField->getAllowedExtensions()),
+                'extensions' => implode(',', $imageField->getAllowedExtensions()),
                 'size' => $allowed_max_file_size / 1024 / 1024
             )));
             // Alter the editable fields
             $imageField->setFileEditFields('getCustomFields');
 
             // Create a dropdown using Sorter
-            $dropdownSorter = DropdownField::create('Sorter', _t("PageImages.IMAGESSORTER", "Sort imags by: "))->setSource($this->owner->dbObject('Sorter')->enumValues($this->class));
+            $dropdownSorter = DropdownField::create('Sorter', _t('PageImages.IMAGESSORTER', 'Sort imags by: '))->setSource($this->owner->dbObject('Sorter')->enumValues($this->class));
             // Add additional class for jquery selector
             $dropdownSorter->addExtraClass('sorter');
             // Add additional class to hide (dropdownSorter) div
@@ -144,30 +148,25 @@ class PageImages extends DataExtension
             }
 
             // Create a dropdown using SorterDir
-            $dropdownSorterDir = DropdownField::create('SorterDir', _t("PageImages.IMAGESSORTERDIR", "Sort direction: "))->setSource($this->owner->dbObject('SorterDir')->enumValues($this->class));
+            $dropdownSorterDir = DropdownField::create('SorterDir', _t('PageImages.IMAGESSORTERDIR', 'Sort direction: '))->setSource($this->owner->dbObject('SorterDir')->enumValues($this->class));
             // Add additional class for jquery selector
             $dropdownSorterDir->addExtraClass('sorterdir');
             // Add additional class to hide (dropdownSorterDir) div
-            if ($this->owner->Images()->count() < 2 || $this->owner->Sorter == "SortOrder") {
+            if ($this->owner->Images()->count() < 2 || $this->owner->Sorter == 'SortOrder') {
                 $dropdownSorterDir->addExtraClass('hidden');
             }
-
-            // Important: Use propertyID as reference name to store the selected value
-            // Info: A click on the selected folder within the interface will reset or better unset!
-            $selectFolderTreedropdown = new TreeDropdownField('FolderID', _t("PageImages.CHOOSEIMAGEFOLDER", "Select folder (optional)"), 'Folder');
-            $selectFolderTreedropdown->setRightTitle( _t("PageImages.IMAGEFOLDERHINT", "Selected folder will be used for images below."));
 
             // Create a translatable tab title
             $imageTabTitle = 'Images';
             // Create a translatable tab header
-            $imageTabHeader = _t("PageImages.IMAGETAB", "Images");
+            $imageTabHeader = _t('PageImages.IMAGETAB', 'Images');
             // Create reference for fields added down below
-            $imageTab = "Root." . $imageTabTitle . "";
+            $imageTab = 'Root.' . $imageTabTitle . '';
 
             // Create a new tab and place it after Main tab
             $fields->insertAfter(new Tab($imageTabTitle, $imageTabHeader), 'Main');
             // Add treedropdown to the tab
-            $fields->addFieldToTab($imageTab, $selectFolderTreedropdown);
+            /* $fields->addFieldToTab($imageTab, $selectFolderTreedropdown); */
             // Add dropdownsorter to the tab
             $fields->addFieldToTab($imageTab, $dropdownSorter);
             // Add dropdownsorter direction to the tab if not SortOrder (manual sort)
@@ -178,14 +177,43 @@ class PageImages extends DataExtension
     }
 
     /**
+     * updateSettingsFields add a field to the CMS interface
+     *
+     * @param FieldList $fields
+     * @return fields
+     */
+    public function updateSettingsFields(FieldList $fields)
+    {
+
+        // Create a nested fieldgroup for images
+        $images_group = FieldGroup::create(
+            FieldGroup::create(CheckboxField::create('ShowImages', _t('PageImages.SHOWIMAGES', 'Enable pageimages?'))),
+            $settings_group = FieldGroup::create(
+                FieldGroup::create(CheckboxField::create('CanUpload', _t('PageImages.CANUPLOAD', 'Can upload?'))),
+                FieldGroup::create(NumericField::create('MaxImages', _t('PageImages.MAXIMAGES', 'Number of images per page'))),
+                FieldGroup::create(TreeDropdownField::create('FolderID', _t('PageImages.CHOOSEIMAGEFOLDER', 'Preselect folder:'), 'Folder'))
+            )
+        )->setTitle(_t('PageImages.IMAGETAB', 'Images'));
+
+        if(!$this->owner->ShowImages) {
+            $images_group->setRightTitle(_t('PageImages.IMAGETABHINT', 'Will show tab Images.'));
+            $settings_group->addExtraClass('hidden');
+        }
+
+        // Add group to Root.Settings
+        $fields->addFieldToTab('Root.Settings', $images_group);
+        return $fields;
+    }
+
+    /**
      * Updates the Image.Size database column of image objects when page is saved
      *
      * @return void
      */
     function onAfterWrite() {
         parent::onAfterWrite();
-        // Update Image.Size database fields of all images assigned to actual page if image sort option is set "Size"
-        if ($this->owner->Sorter == "ImageSize")
+        // Update Image.Size database fields of all images assigned to actual page if image sort option is set 'Size'
+        if ($this->owner->Sorter == 'ImageSize')
         {
             PageImage::writeSize($this->owner->Folder()->ID);
         }
@@ -201,41 +229,9 @@ class PageImages extends DataExtension
         // Set default Sorter if all images have been removed
         if ($this->owner->Images()->count() == 0)
         {
-            $this->owner->Sorter = "SortOrder";
-            $this->owner->SorterDir = "ASC";
+            $this->owner->Sorter = 'SortOrder';
+            $this->owner->SorterDir = 'ASC';
         }
-    }
-
-
-    /**
-     * updateSettingsFields add a field to the CMS interface
-     *
-     * @param FieldList $fields
-     * @return fields
-     */
-    public function updateSettingsFields(FieldList $fields)
-    {
-        // Create a nested fieldgroup for images
-        $images_group = FieldGroup::create(
-            $checkboxField_group = FieldGroup::create(CheckboxField::create("ShowImages", _t("PageImages.SHOWIMAGES", "Show tab Images."))),
-            $numericField_group = FieldGroup::create(NumericField::create("MaxImages", _t("PageImages.MAXIMAGES", "Maximum images"))),
-            $checkboxField_group1 = FieldGroup::create(CheckboxField::create("CanUpload", _t("PageImages.CANUPLOAD", "Can upload.")))
-        )->setTitle(_t("PageImages.IMAGETAB", "Images"));
-
-        $checkboxField_group->setTitle('MaxImages');
-        if(!$this->owner->ShowImages) {
-            $numericField_group->addExtraClass('hidden');
-        }
-
-        // Add a information for the user
-        $checkboxField_group->setRightTitle(_t("PageImages.IMAGETABHINT", "Enable addional images for this page."));
-
-
-
-        // Add group to Root.Settings
-        $fields->addFieldToTab("Root.Settings", $images_group);
-
-        return $fields;
     }
 
     /**
@@ -255,7 +251,7 @@ class PageImages extends DataExtension
      */
     public function SortedImages()
     {
-        if($this->owner->Sorter == "SortOrder")
+        if($this->owner->Sorter == 'SortOrder')
         {
             return $this->owner->Images()->Sort($this->owner->Sorter);
         }
@@ -286,8 +282,8 @@ class PageImages extends DataExtension
     public function AllImagesFromFolder()
     {
         $folder = $this->owner->Folder();
-        // SS_Log::log("folder = ".$folder->ID, SS_Log::WARN);
-        return $folder ? DataObject::get("Image", "ParentID = '{$folder->ID}'") : false;
+        // SS_Log::log('folder = '.$folder->ID, SS_Log::WARN);
+        return $folder ? DataObject::get('Image', 'ParentID = "{$folder->ID}"') : false;
     }
 }
 
