@@ -19,7 +19,7 @@
 class PageImages extends DataExtension
 {
 
-    // Add 3 columns to [OWNER] table
+    // Add additional fields (columns to [OWNER] table)
     private static $db = array(
         // Store if images tab should be shown
         'ShowImages' => 'Boolean(1)',
@@ -205,6 +205,24 @@ class PageImages extends DataExtension
         return $fields;
     }
 
+
+    /**
+     * Determine if this user can edit page settings.
+     *
+     * @param int|Member $member
+     *
+     * @return bool
+     */
+    public function canEditPageSettings($member = null)
+    {
+        $member = $this->getMember($member);
+        $extended = $this->extendedCan('canEditEditors', $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+        return Permission::checkMember($member, self::MANAGE_USERS);
+    }
+
     /**
      * Updates the Image.Size database column of image objects when page is saved
      *
@@ -286,5 +304,4 @@ class PageImages extends DataExtension
         return $folder ? DataObject::get('Image', 'ParentID = "{$folder->ID}"') : false;
     }
 }
-
 // EOF
