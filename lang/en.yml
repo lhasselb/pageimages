@@ -3,12 +3,13 @@ en:
   PageImages:
     IMAGESSORTER: "Sort imags by: "
     IMAGESSORTERDIR: "Sort direction: "
-    IMAGESUPLOADLABEL: "Images"
+    IMAGES: "Images"
+    IMAGESFOLDER: "Preselected folder: "
     IMAGESUPLOADLIMIT: "Up to {count} image(s) of type {extensions} with a max. size of {size} MB per file."
     IMAGETAB: "Additional Images"
     IMAGETABHINT: "Show tab \"Additional Images\" to manage additional page images"
     SHOWIMAGES: "Enable pageimages?"
-    CANUPLOAD: "User can upload images?"
+    CANUPLOAD: "Enable image upload?"
     MAXIMAGES: "Maximum number of images"
     CHOOSEIMAGEFOLDER: "Preselect folder"
 

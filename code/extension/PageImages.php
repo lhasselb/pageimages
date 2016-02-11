@@ -107,7 +107,7 @@ class PageImages extends DataExtension
             $allowed_max_file_size = Config::inst()->get("PageImages", "allowed_max_file_size");
 
             // Create a sortable uploadfield called imageField with an translateable name (default name "Images")
-            $imageField = SortableUploadField::create("Images", _t("PageImages.IMAGESUPLOADLABEL", "Images"));
+            $imageField = SortableUploadField::create("Images", _t("PageImages.IMAGES", "Images"));
 
             // Obtain user selected folder
             if ($selectedFolderPathNameId != 0) {
@@ -149,8 +149,19 @@ class PageImages extends DataExtension
             // Change the editable fields, see PageImage->getCustomFields()
             $imageField->setFileEditFields("getCustomFields");
 
-            // User should be able to attach existing files even upload is diabled
-            $imageField->setCanAttachExisting(true);
+            // User should be able to attach existing files when upload is diabled
+            if(!(bool)$this->owner->CanUpload) {
+                // allow access to SilverStripe assets library
+                $imageField->setCanAttachExisting(true);
+                // Don't show target filesystem folder on upload field
+                $imageField->setCanPreviewFolder(false);
+            }
+
+            // Display preselected folder
+            if($this->owner->Folder() && $this->owner->Folder()->ID !=0) {
+                $imageField->setTitle(_t("PageImages.IMAGESFOLDER", "Preselected folder: ").$this->owner->Folder()->Name);
+            } else $imageField->setTitle("");
+
 
             // Create a dropdown using Sorter
             $dropdownSorter = DropdownField::create("Sorter", _t("PageImages.IMAGESSORTER", "Sort imags by: "))->setSource($this->owner->dbObject("Sorter")->enumValues($this->class));
@@ -199,14 +210,22 @@ class PageImages extends DataExtension
 
         // Get the current member
         $member = $this->getMember();
-        //Check user permission for "Change site structure"
+        /*
+        SS_Log::log("Found member name = ".$member->Name.", ID= ".$member->ID,SS_Log::WARN);
+        $groups = $member->Groups();
+        if($groups) {
+            foreach ($groups as $group) {
+                SS_Log::log("Group = ".$group->Title." ,code=".$group->Code,SS_Log::WARN);
+            }
+        }*/
+        //Limit user access to settings by permission for "Change site structure" (SITETREE_REORGANISE)
         if (Permission::checkMember($member, 'SITETREE_REORGANISE')) {
 
             // Create a nested fieldgroup for images
             $images_group = FieldGroup::create(
                 FieldGroup::create(CheckboxField::create("ShowImages", _t("PageImages.SHOWIMAGES", "Enable pageimages?"))),
                 $settings_group = FieldGroup::create(
-                    FieldGroup::create(CheckboxField::create("CanUpload", _t("PageImages.CANUPLOAD", "Can upload?"))),
+                    FieldGroup::create(CheckboxField::create("CanUpload", _t("PageImages.CANUPLOAD", "Enable image upload?"))),
                     FieldGroup::create(NumericField::create("MaxImages", _t("PageImages.MAXIMAGES", "Number of images per page"))),
                     FieldGroup::create(TreeDropdownField::create("FolderID", _t("PageImages.CHOOSEIMAGEFOLDER", "Preselect folder:"), "Folder"))
                 )
@@ -224,6 +243,16 @@ class PageImages extends DataExtension
 
         return $fields;
     }
+
+    public function validate(ValidationResult $validationResult) {
+        //$field = $this->owner->
+        SS_Log::log("validate(ValidationResult) called",SS_Log::WARN);
+        SS_Log::log("result ".$this->owner->value,SS_Log::WARN);
+        if($this->owner->value <= 1) { return false;}
+        return true;
+
+    }
+
 
     /**
      * Obtain a Member

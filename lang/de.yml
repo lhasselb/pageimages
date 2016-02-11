@@ -3,12 +3,13 @@ de:
   PageImages:
     IMAGESSORTER: "Sortieren nach: "
     IMAGESSORTERDIR: "Sortierrichtung: "
-    IMAGESUPLOADLABEL: "Bilder"
+    IMAGES: "Bilder"
+    IMAGESFOLDER: "Vorgewähltes Verzeichnis: "
     IMAGESUPLOADLIMIT: "Maximal {count} Bild(er) der Typen {extensions} mit einer Größe von max. {size} MB pro Datei."
     IMAGETAB: "Zusätzliche Bilder"
     IMAGETABHINT: "Zeige Karteireiter \"Zusätzliche Bilder\" um zusätzliche Bilder zu verwalten."
     SHOWIMAGES: "Aktiviere pageimages"
-    CANUPLOAD: "Benutzer kann Bilder hochladen?"
+    CANUPLOAD: "Aktiviere das Hochladen von Bildern?"
     MAXIMAGES: "Maximale Anzahl Bilder:"
     CHOOSEIMAGEFOLDER: "Verzeichnis vorwählen:"
 

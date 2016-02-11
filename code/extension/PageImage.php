@@ -36,6 +36,24 @@ class PageImage extends DataExtension  {
     }
 
     /**
+     * By default Image::canDelete and Image::canEdit
+     * do not require admin privileges,
+     * so make sure you override the methods in your Image extension class.
+     */
+    function canEdit($member) {
+        // WARNING! This affects permissions on ALL images. Setting this incorrectly can restrict
+        // access to authorised users or unintentionally give access to unauthorised users if set incorrectly.
+        return Permission::check('CMS_ACCESS_AssetAdmin');
+    }
+
+    function canDelete($member) {
+        // WARNING! This affects permissions on ALL images. Setting this incorrectly can restrict
+        // access to authorised users or unintentionally give access to unauthorised users if set incorrectly.
+        return Permission::check('CMS_ACCESS_AssetAdmin');
+    }
+
+
+    /**
      * Creates/updates the Size database column of all image objects.
      *
      * @param integer $parentId (if set only image objects assigned to this ID are updated)
