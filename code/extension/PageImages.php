@@ -244,15 +244,12 @@ class PageImages extends DataExtension
         return $fields;
     }
 
+    /*
     public function validate(ValidationResult $validationResult) {
-        //$field = $this->owner->
-        SS_Log::log("validate(ValidationResult) called",SS_Log::WARN);
-        SS_Log::log("result ".$this->owner->value,SS_Log::WARN);
-        if($this->owner->value <= 1) { return false;}
-        return true;
-
-    }
-
+        if($this->owner->MaxImages <= 1 || $this->owner->MaxImages >= 99) {
+            $validationResult->error("Value needs to be within 1-99","validation");
+        }
+    }*/
 
     /**
      * Obtain a Member
