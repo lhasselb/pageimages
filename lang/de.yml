@@ -22,8 +22,13 @@ de:
 # SorterDir (Enum) translation
     ASC: "Aufsteigend"
     DESC: "Absteigend"
+
 # PageImage translation
   PageImage:
     TITLE: "Titel"
     CAPTION: "Bildunterschrift"
     CAPTIONHINT: "Einfacher Text - kene HTML Tags."
+
+# NumericFieldNotZero translation
+  NumericFieldNotZero:
+    VALIDATION: "'{value}' ist kein gültiger numerischer Wert, nur nummerische Werte grösser 0 sind in diesem Feld erlaubt."

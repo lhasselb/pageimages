@@ -24,7 +24,7 @@ Page:
   extensions:
     - PageImages
 
-# Extend Object Image
+# Extend Image
 Image:
   extensions:
     - PageImage

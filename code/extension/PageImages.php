@@ -58,6 +58,7 @@ class PageImages extends DataExtension
     );
 
     // Set field defaults
+/*
     private static $defaults = array(
         "ShowImages" => 1,
         "CanUpload" => 1,
@@ -65,6 +66,7 @@ class PageImages extends DataExtension
         "CanEditType" => "ASC",
         "MaxImages" => "10"
     );
+*/
     /**
      * @config @var string upload folder name used to store/load images
      */
@@ -226,7 +228,7 @@ class PageImages extends DataExtension
                 FieldGroup::create(CheckboxField::create("ShowImages", _t("PageImages.SHOWIMAGES", "Enable pageimages?"))),
                 $settings_group = FieldGroup::create(
                     FieldGroup::create(CheckboxField::create("CanUpload", _t("PageImages.CANUPLOAD", "Enable image upload?"))),
-                    FieldGroup::create(NumericField::create("MaxImages", _t("PageImages.MAXIMAGES", "Number of images per page"))),
+                    FieldGroup::create(NumericFieldNotZero::create("MaxImages", _t("PageImages.MAXIMAGES", "Number of images per page"))),
                     FieldGroup::create(TreeDropdownField::create("FolderID", _t("PageImages.CHOOSEIMAGEFOLDER", "Preselect folder:"), "Folder"))
                 )
             )->setTitle(_t("PageImages.IMAGETAB", "Images"));
@@ -244,6 +246,9 @@ class PageImages extends DataExtension
         return $fields;
     }
 
+    /**
+     * Hook for extension-specific validation.
+     */
     /*
     public function validate(ValidationResult $validationResult) {
         if($this->owner->MaxImages <= 1 || $this->owner->MaxImages >= 99) {
@@ -298,7 +303,26 @@ class PageImages extends DataExtension
             $this->owner->Sorter = "SortOrder";
             $this->owner->SorterDir = "ASC";
         }
+
+        // Set defaults on disabling
+        if(!$this->owner->ShowImages && $this->owner->Folder()->ID !=0 ) {
+            $folder = $this->owner->Folder();
+            SS_Log::log("after if Folder ".$folder->ID." ".$folder->Name,SS_Log::WARN);
+            //$this->owner->Folder()->delete();
+            /*
+            $folder = Folder::get_by_id("Folder",1);
+            SS_Log::log($folder->Name,SS_Log::WARN);
+            $this->owner->Folder = $folder;
+            $this->owner->CanUpload = 1;
+            $this->owner->MaxImages = 10;
+            $this->owner->Sorter = "SortOrder";
+            $this->owner->SorterDir = "ASC";
+            */
+        }
     }
+
+
+    /*function populateDefaults() {}*/
 
     /**
      * Return wheter enabled or not
