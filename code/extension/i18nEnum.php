@@ -4,8 +4,11 @@
  * Enable i18n translation for Enum.
  * ========================================
  * See http://www.balbuss.com/translating-an-enum-dropdown/
+ * 
+ * @package silverstripe
+ * @subpackage pageimages
+ * 
  * @author guggelimehl [at] gmail.com
- * @package pageimages
  */
 class i18nEnum extends Enum
 {
@@ -31,17 +34,18 @@ class i18nEnum extends Enum
     function enumValues($namespace = 'Enum', $hasEmpty = false)
     {
         $translatedOptions = array();
-
+        
         $options = ($hasEmpty) ? array_merge(array(
             '' => ''
         ), $this->enum) : $this->enum;
-
+        
         if (! empty($options)) {
             foreach ($options as $value) {
                 $translatedOptions[$value] = _t("$namespace.$value", $value);
             }
         }
-
+        
         return $translatedOptions;
     }
 }
+// EOF

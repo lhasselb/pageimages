@@ -32,3 +32,7 @@ de:
 # NumericFieldNotZero translation
   NumericFieldNotZero:
     VALIDATION: "'{value}' ist kein gültiger numerischer Wert, nur nummerische Werte grösser 0 sind in diesem Feld erlaubt."
+
+#Missing in Framework - Use transiflex!
+  DropdownField:
+    CHOOSESEARCH: '(Wählen oder Suchen)'

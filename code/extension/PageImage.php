@@ -8,14 +8,15 @@
  * Extends SilverStripe image object to provide additional functionality.
  *
  * @package silverstripe
- * @subpackage pageimage
+ * @subpackage pageimages
  *
  * @author guggelimehl [at] gmail.com
  *
  */
-class PageImage extends DataExtension  {
-
-    // Add 2 columns to Image table
+class PageImage extends DataExtension
+{
+    
+    // Add 2 fields (columns to Image table)
     private static $db = array(
         // Store Image size
         'ImageSize' => 'int',
@@ -24,13 +25,16 @@ class PageImage extends DataExtension  {
     );
 
     /**
+     *
      * {@inheritdoc}
+     *
      */
-    function getCustomFields() {
+    function getCustomFields()
+    {
         $fields = new FieldList();
-        $fields->push(new TextField('Title', _t('PageImage.TITLE','Title') ) );
-        $caption = new TextareaField('Caption', _t('PageImage.CAPTION','Caption'));
-        $caption->setRightTitle(_t('PageImage.CAPTIONHINT','Plain text - no HTML tags.'));
+        $fields->push(new TextField('Title', _t('PageImage.TITLE', 'Title')));
+        $caption = new TextareaField('Caption', _t('PageImage.CAPTION', 'Caption'));
+        $caption->setRightTitle(_t('PageImage.CAPTIONHINT', 'Plain text - no HTML tags.'));
         $fields->push($caption);
         return $fields;
     }
@@ -40,50 +44,51 @@ class PageImage extends DataExtension  {
      * do not require admin privileges,
      * so make sure you override the methods in your Image extension class.
      */
-    function canEdit($member) {
+    function canEdit($member)
+    {
         // WARNING! This affects permissions on ALL images. Setting this incorrectly can restrict
         // access to authorised users or unintentionally give access to unauthorised users if set incorrectly.
         return Permission::check('CMS_ACCESS_AssetAdmin');
     }
 
-    function canDelete($member) {
+    function canDelete($member)
+    {
         // WARNING! This affects permissions on ALL images. Setting this incorrectly can restrict
         // access to authorised users or unintentionally give access to unauthorised users if set incorrectly.
         return Permission::check('CMS_ACCESS_AssetAdmin');
     }
-
 
     /**
      * Creates/updates the Size database column of all image objects.
      *
-     * @param integer $parentId (if set only image objects assigned to this ID are updated)
+     * @param integer $parentId
+     *            (if set only image objects assigned to this ID are updated)
      * @return void
      */
-    public static function writeSize($parentId=null) {
+    public static function writeSize($parentId = null)
+    {
         // fetch all requested image objects
         if (is_numeric($parentId)) {
             $images = Image::get()->filter('ParentID', $parentId);
         } else {
             $images = Image::get();
         }
-
-        if (! $images->exists()) return false;
-
-        // write/update Image.Size database columns
+        
+        if (! $images->exists())
+            return false;
+            
+            // write/update Image.Size database columns
         foreach ($images as $image) {
             // get image size
             $size = $image->getAbsoluteSize();
-            //SS_Log::log("Image getSize = ".$image->getAbsoluteSize(), SS_Log::WARN);
-            //SS_Log::log("Image ImageSize = ".$image->ImageSize, SS_Log::WARN);
-            // update database field only when value differs from dtored
+            // SS_Log::log("Image getSize = ".$image->getAbsoluteSize(), SS_Log::WARN);
+            // SS_Log::log("Image ImageSize = ".$image->ImageSize, SS_Log::WARN);
+            // update database field only when value differs from stored
             if ($size != $image->ImageSize) {
                 $image->ImageSize = $size;
                 $image->write();
             }
-
         }
     }
-
 }
-
 // EOF
