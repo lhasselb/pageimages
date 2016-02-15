@@ -18,6 +18,7 @@
             attr = (attr == 'id') ? 'fileid' : attr;
             //console.log('sorter=' + attr + ', dir=' + dir);
             list.sort(function(a,b) {
+                //console.log('a=' + $(a).data(attr) + ', b=' + $(b).data(attr));
                 // Compare integer
                 if(attr == 'fileid') {
                     //console.log('a=' + $(a).data(attr) + ', b=' + $(b).data(attr) );

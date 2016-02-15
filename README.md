@@ -1,9 +1,9 @@
 
 # SilverStripe page image extension
 
-Add images to a DataObject
+Add additional images to a page
 
-Useful to add images to any page or inheritor like BlogPost
+Manage images on pages like BlogPost
 (see [Blog](https://github.com/silverstripe/silverstripe-blog.git/ "Blog module") ) using an additional tab in the backend.
 
 Uses a has_one relation to assign a folder containing your images. Offers [UploadField] (https://docs.silverstripe.org/en/3.2/developer_guides/forms/field_types/uploadfield/) sorting using [sortablefile](https://github.com/bummzack/sortablefile).
@@ -16,14 +16,9 @@ Uses a has_one relation to assign a folder containing your images. Offers [Uploa
 
 
 ## Configuration
-By default the extension is enabled for DataObject Page.
-You can add the extension to other DataObject by changing the configuration.
+By default the extension is enabled for Pages.
+You can add the extension to other DataObjects by changing the configuration.
 See file "config.yml" within "/SS_ROOT/pageimages/_config" folder.
-```
-Page:
-  extensions:
-    - PageImages
-```
 Read more about [silverstripe configuration](http://doc.silverstripe.com/framework/en/topics/configuration).
 
 ## Configurable parameter(s) available in config.yml.

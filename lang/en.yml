@@ -18,6 +18,7 @@ en:
     Title: "Title"
     Name: "Name"
     ID: "ID (Database order)"
+    Date: "Date"
     ImageSize: "Size"
 # SorterDir (Enum) translation
     ASC: "Ascending"

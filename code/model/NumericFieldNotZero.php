@@ -1,14 +1,14 @@
 <?php
-
 /**
  * Text input field with validation for numeric values. Supports validating
  * the numeric value as to the {@link i18n::get_locale()} value, or an
  * overridden locale specific to this field.
  *
- * @package silverstripe
- * @subpackage pageimages
- * 
- * @author guggelimehl [at] gmail.com
+ * @package pageimages
+ * @subpackage model
+ * @author      [SYBEHA] (http://sybeha.de)
+ * @copyright   [SYBEHA]
+ * @license     http://www.gnu.org/licenses/gpl-3.0.html
  */
 class NumericFieldNotZero extends NumericField
 {
@@ -28,7 +28,7 @@ class NumericFieldNotZero extends NumericField
     /**
      * Validate this field
      *
-     * @param Validator $validator            
+     * @param Validator $validator
      * @return bool
      */
     public function validate($validator)
@@ -36,15 +36,15 @@ class NumericFieldNotZero extends NumericField
         if (! $this->value) {
             return true;
         }
-        
+
         if ($this->isNumeric() && $this->value > 0) {
             return true;
         }
-        
+
         $validator->validationError($this->name, _t('NumericFieldNotZero.VALIDATION', "'{value}' is not a valid number, only numbers > 0 can be accepted for this field", array(
             'value' => $this->value
         )), "validation");
-        
+
         return false;
     }
 }

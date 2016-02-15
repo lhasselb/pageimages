@@ -2,13 +2,13 @@
 Name: pageimages
 ---
 # pageimages configurable parameter(s):
-PageImages:
+PageImages_PageExtension:
 # Set a specific folder name to upload to
 # Default = Uploads
 #  upload_folder_name: 'Uploads'
 
 # Set allowed extensions for images
-# Default to types known by file category image
+# Default to jpg, jpeg, gif, png
 #  allowed_extensions:
 #    - jpg
 #    - jpeg
@@ -22,12 +22,12 @@ PageImages:
 # Extend DataObject Page
 Page:
   extensions:
-    - PageImages
+    - PageImages_PageExtension
 
 # Extend Image
 Image:
   extensions:
-    - PageImage
+    - PageImages_ImageExtension
 
 #Add some required styles to cms
 LeftAndMain:

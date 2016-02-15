@@ -1,9 +1,15 @@
 /* Hide sorter on page initialization */
-.sorterdir.hidden, .sorter.hidden {
+.sorterdir.hidden, .sorter.hidden
+{
     display: none;
 }
 /* Hide pageimages settings */
 .CompositeField.fieldgroup.hidden
 {
     display: none;
+}
+/* Style date */
+.ss-uploadfield .ss-uploadfield-item .ss-uploadfield-item-info .ss-uploadfield-item-name .date
+{
+ color: #8d98a2; padding: 0 0 0 5px; display: inline; float: left;
 }

@@ -1,30 +1,24 @@
 <?php
-
 /**
- * Class PageImages
  *
- * Extension to enable images on a DataObject.
- * ========================================
- * Decorate DataObject with a booloan (is image tab enabled?)
- * and an sort and sort direction enum as i18Enum.
- * Enum has been replaced by i18nEnum to enable translation.
- * Use "ShowImages" => "Boolean(1)" for enabling images by default.
+ * Extends SilverStripe page object to provide additional functionality.
  *
- * @package silverstripe
- * @subpackage pageimages
- *
- * @author guggelimehl [at] gmail.com
+ * @package pageimages
+ * @subpackage extension
+ * @author      [SYBEHA] (http://sybeha.de)
+ * @copyright   [SYBEHA]
+ * @license     http://www.gnu.org/licenses/gpl-3.0.html
  *
  */
-class PageImages extends DataExtension
+class PageImages_PageExtension extends DataExtension
 {
-    
+
     // Add 5 fields (columns to [OWNER] table)
     private static $db = array(
         // Store if enabled / tab should be shown
         "ShowImages" => "Boolean(1)",
         // Store sort attribute used
-        "Sorter" => "i18nEnum('SortOrder, Title, Name, ID, ImageSize')",
+        "Sorter" => "i18nEnum('SortOrder, Title, Name, ID, Date, ImageSize')",
         // Store sort direction
         "SorterDir" => "i18nEnum('ASC, DESC')",
         // Store max number of images
@@ -32,13 +26,13 @@ class PageImages extends DataExtension
         // Store if user can upload "external" images
         "CanUpload" => "Boolean(1)"
     );
-    
+
     // Add column FolderID to [OWNER] table
     private static $has_one = array(
         // Store selected folder
         "Folder" => "Folder"
     );
-    
+
     // Create a relation table [OWNER]_images
     private static $many_many = array(
         // Multiple images in several places
@@ -65,20 +59,15 @@ class PageImages extends DataExtension
     /**
      * @config @var array list of allowed extensions
      */
-    private static $allowed_extensions = array(
-        "jpg",
-        "jpeg",
-        "gif",
-        "png"
-    );
+    private static $allowed_extensions = array();
     // Empty because we"re defaulting to category image
-    
+
     /**
      * @config @var int max file size for images
      */
     private static $allowed_max_file_size = 1048576;
     // 1 MB in bytes;
-    
+
     /**
      *
      * {@inheritdoc}
@@ -89,25 +78,32 @@ class PageImages extends DataExtension
         // CSS reference has been moved to config.yml
         // Requirements::css(PAGEIMAGES_DIR . "/css/PageImages.css");
         Requirements::javascript(PAGEIMAGES_DIR . "/javascript/PageImages.js");
-        
+
         if ($this->owner->ShowImages) {
-            
+
             // Obtain folder name
-            $upload_folder_name = Config::inst()->get("PageImages", "upload_folder_name");
+            $upload_folder_name = Config::inst()->get("PageImages_PageExtension", "upload_folder_name");
             // Obtain alowed image extensions
-            $allowed_extensions = Config::inst()->get("PageImages", "allowed_extensions");
+            $allowed_extensions = Config::inst()->get("PageImages_PageExtension", "allowed_extensions");
+            if(empty($allowed_extensions)) $allowed_extensions = array("jpg", "jpeg", "gif", "png");
             // Obtain alowed max file size
-            $allowed_max_file_size = Config::inst()->get("PageImages", "allowed_max_file_size");
-            
+            $allowed_max_file_size = Config::inst()->get("PageImages_PageExtension", "allowed_max_file_size");
+
+            //SS_Log::log("upload_folder_name = ".$upload_folder_name, SS_Log::WARN);
+            //SS_Log::log("allowed_extensions = ".implode($allowed_extensions,","), SS_Log::WARN);
+            //SS_Log::log("allowed_extensions - gettype = ".gettype($allowed_extensions), SS_Log::WARN);
+
             // Create a sortable uploadfield called imageField with an translateable name (default name "Images")
             $imageField = SortableUploadField::create("Images", _t("PageImages.IMAGES", "Images"));
-            
+
             // Obtain user selected folder - if nothing selected yet folder ID is 0
             if ($this->owner->Folder()->ID != 0) {
+                // Use complete pathe instead of folder name ($this->owner->Folder()->Name)!
+                $selectedFolderPathName = ltrim($this->owner->Folder()->getRelativePath(), '/assets/');
                 // Use selected folder to upload images to
-                $imageField->setFolderName($this->owner->Folder()->Name);
+                $imageField->setFolderName($selectedFolderPathName);
                 // Use selected folder to select images from
-                $imageField->setDisplayFolderName($this->owner->Folder()->Name);
+                $imageField->setDisplayFolderName($selectedFolderPathName);
             // No folder selected yet, check configured folder, if no configuration was set use default (Uploads)
             } else {
                 // Use selected folder to upload images to
@@ -115,7 +111,7 @@ class PageImages extends DataExtension
                 // Use selected folder to select images from
                 $imageField->setDisplayFolderName($upload_folder_name);
             }
-            
+
             // Set configuration parameter "allowedMaxFileNumber"
             $imageField->setConfig("allowedMaxFileNumber", $this->owner->MaxImages);
             // Set can upload
@@ -134,10 +130,10 @@ class PageImages extends DataExtension
                 "extensions" => implode(",", $imageField->getAllowedExtensions()),
                 "size" => $allowed_max_file_size / 1024 / 1024
             )));
-            
+
             // Change the editable fields, see PageImage->getCustomFields()
             $imageField->setFileEditFields("getCustomFields");
-            
+
             // User should be able to attach existing files when upload is diabled
             if (! (bool) $this->owner->CanUpload) {
                 // allow access to SilverStripe assets library
@@ -145,13 +141,13 @@ class PageImages extends DataExtension
                 // Don't show target filesystem folder on upload field
                 $imageField->setCanPreviewFolder(false);
             }
-            
+
             // Display preselected folder
             if ($this->owner->Folder() && $this->owner->Folder()->ID != 0) {
                 $imageField->setTitle(_t("PageImages.IMAGESFOLDER", "Preselected folder: ") . $this->owner->Folder()->Name);
             } else
                 $imageField->setTitle("");
-                
+
             // Create a dropdown using Sorter
             $dropdownSorter = DropdownField::create("Sorter", _t("PageImages.IMAGESSORTER", "Sort imags by: "))->setSource($this->owner->dbObject("Sorter")
                 ->enumValues($this->class));
@@ -161,7 +157,7 @@ class PageImages extends DataExtension
             if ($this->owner->Images()->count() < 2) {
                 $dropdownSorter->addExtraClass("hidden");
             }
-            
+
             // Create a dropdown using SorterDir
             $dropdownSorterDir = DropdownField::create("SorterDir", _t("PageImages.IMAGESSORTERDIR", "Sort direction: "))->setSource($this->owner->dbObject("SorterDir")
                 ->enumValues($this->class));
@@ -171,14 +167,14 @@ class PageImages extends DataExtension
             if ($this->owner->Images()->count() < 2 || $this->owner->Sorter == "SortOrder") {
                 $dropdownSorterDir->addExtraClass("hidden");
             }
-            
+
             // Create a tab title
             $imageTabTitle = "Images";
             // Create a translatable tab header
             $imageTabHeader = _t("PageImages.IMAGETAB", "Page Images");
             // Create reference for fields added down below
             $imageTab = "Root." . $imageTabTitle . "";
-            
+
             // Create a new tab and place it after Main tab
             $fields->insertAfter(new Tab($imageTabTitle, $imageTabHeader), "Main");
             // Add dropdownsorter to the tab
@@ -197,32 +193,32 @@ class PageImages extends DataExtension
      */
     public function updateSettingsFields(FieldList $fields)
     {
-        
+
         // Get the current member
         $member = $this->getMember();
 
         // Limit user access to settings by permission for "Change site structure" (SITETREE_REORGANISE)
         if (Permission::checkMember($member, 'SITETREE_REORGANISE')) {
-            
+
             // Create a nested fieldgroup for images
             $images_group = FieldGroup::create(FieldGroup::create(CheckboxField::create("ShowImages", _t("PageImages.SHOWIMAGES", "Enable pageimages?"))), $settings_group = FieldGroup::create(FieldGroup::create(CheckboxField::create("CanUpload", _t("PageImages.CANUPLOAD", "Enable image upload?"))), FieldGroup::create(NumericFieldNotZero::create("MaxImages", _t("PageImages.MAXIMAGES", "Number of images per page"))), FieldGroup::create(TreeDropdownField::create("FolderID", _t("PageImages.CHOOSEIMAGEFOLDER", "Preselect folder:"), "Folder"))))->setTitle(_t("PageImages.IMAGETAB", "Images"));
-            
+
             if (! $this->owner->ShowImages) {
                 $images_group->setRightTitle(_t("PageImages.IMAGETABHINT", "Show tab Images to manage additional page images."));
                 $settings_group->addExtraClass("hidden");
             }
-            
+
             // Add group to Root.Settings
             $fields->addFieldToTab("Root.Settings", $images_group);
         }
-        
+
         return $fields;
     }
 
     /**
      * Obtain a Member
      *
-     * @param null|int|Member $member            
+     * @param null|int|Member $member
      *
      * @return null|Member
      */
@@ -231,14 +227,14 @@ class PageImages extends DataExtension
         if (! $member) {
             $member = Member::currentUser();
         }
-        
+
         if (is_numeric($member)) {
             $member = Member::get()->byID($member);
         }
-        
+
         return $member;
     }
-    
+
     /**
      *
      * {@inheritdoc}
@@ -247,9 +243,13 @@ class PageImages extends DataExtension
     function onAfterWrite()
     {
         parent::onAfterWrite();
-        // Update Image.Size database fields of all images assigned to actual page if image sort option is set "Size"
-        if ($this->owner->Sorter == "ImageSize") {
-            PageImage::writeSize($this->owner->Folder()->ID);
+        // Update Image.Size database fields of all images assigned to actual page if image sort option is set to "Size"
+        if ($this->owner->Sorter == "ImageSize" && $this->owner->Images()->count() > 0) {
+            PageImages_ImageExtension::writeSize($this->owner->Images());
+        }
+        // Update Image.ExifDate database fields of all images assigned to actual page if image sort option is set to  "Date"
+        if ($this->owner->Sorter == "Date" && $this->owner->Images()->count() > 0) {
+            PageImages_ImageExtension::writeExifDates($this->owner->Images());
         }
     }
 
@@ -261,13 +261,13 @@ class PageImages extends DataExtension
     function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        
+
         // Reset default Sorter if all images have been removed
         if ($this->owner->Images()->count() == 0) {
             $this->owner->Sorter = "SortOrder";
             $this->owner->SorterDir = "ASC";
         }
-        
+
         // Extension has been disabled - Clean up!
         if (! $this->owner->ShowImages && $this->owner->Folder()->ID != 0) {
             $this->owner->Sorter = "SortOrder";
