@@ -13,7 +13,7 @@
 						<span class="name">$Name.XML</span>
 						<span class="size">$Size</span>
 <!---[SYBEHA] date added start -->
-                        <span class="date">$ExifDate.FormatFromSettings()</span>
+                        <span class="date"><% if $ExifDate %>$ExifDate.FormatFromSettings()<% end_if %></span>
 <!---[SYBEHA] date added end -->
 						<div class="clear"><!-- --></div>
 					</label>
