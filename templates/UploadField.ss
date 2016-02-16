@@ -2,7 +2,7 @@
 	<% if $CustomisedItems %>
 		<% loop $CustomisedItems %>
 		<!--<li class="ss-uploadfield-item template-download" data-fileid="$ID"> add additional attributes for javascript -->
-<!---[SYBEHA] replaced line above with line below -->
+<!---[SYBEHA] replaced line above with line below: Add additional attributes for sorting -->
             <li class="ss-uploadfield-item template-download" data-fileid="$ID" data-name="$Name.XML" data-title="$Title.XML" data-imagesize="$Size" data-date="$ExifDate">
 				<div class="ss-uploadfield-item-preview preview"><span>
 					<img alt="$hasRelation" src="$UploadFieldThumbnailURL" />
@@ -12,8 +12,9 @@
 					<label class="ss-uploadfield-item-name">
 						<span class="name">$Name.XML</span>
 						<span class="size">$Size</span>
-<!---[SYBEHA] date added -->
-                        <span class="date"> $ExifDate.FormatI18N("%Y %b %d. %A, %X")</span>
+<!---[SYBEHA] date added start -->
+                        <span class="date">$ExifDate.FormatFromSettings()</span>
+<!---[SYBEHA] date added end -->
 						<div class="clear"><!-- --></div>
 					</label>
 					<div class="ss-uploadfield-item-actions">

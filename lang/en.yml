@@ -1,10 +1,10 @@
 en:
 # PageImages translation
-  PageImages:
+  PageImages_PageExtension:
     IMAGESSORTER: "Sort imags by: "
     IMAGESSORTERDIR: "Sort direction: "
     IMAGES: "Images"
-    IMAGESFOLDER: "Preselected folder: "
+    IMAGESFOLDER: "Preselected folder: <span style='font-weight: bold;'>{folder}</span>"
     IMAGESUPLOADLIMIT: "Up to {count} image(s) of type {extensions} with a max. size of {size} MB per file."
     IMAGETAB: "Additional Images"
     IMAGETABHINT: "Show tab \"Additional Images\" to manage additional page images"

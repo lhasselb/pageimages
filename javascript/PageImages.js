@@ -59,7 +59,8 @@
                 var sorterdir = $('select.dropdown.sorterdir').val().toLowerCase();
                 var imagesList = $('ul.ss-uploadfield-files.files li');
                 this.html(sortedList(imagesList,sorter,sorterdir));
-                this._super();
+                // Enable drag n drop sorting
+                if(sorter == 'sortorder') this._super();
             }
         });
 
@@ -76,8 +77,12 @@
                     var imagesList = $('#Form_EditForm_Images_Holder ul.ss-uploadfield-files.files li');
                     $('ul.ss-uploadfield-files.files').html(sortedList(imagesList,sorter,sorterdir));
                     $('div.field.dropdown.sorterdir').show();
+                    // Disable drag n drop sorting
+                    $(".sortableupload.ss-uploadfield ul.ss-uploadfield-files").sortable("destroy");
                 } else {
                     $('div.field.dropdown.sorterdir').hide();
+                    // Enable drag n drop sorting
+                    $(".sortableupload.ss-uploadfield ul.ss-uploadfield-files").sortable();
                 }
                 this._super();
             }

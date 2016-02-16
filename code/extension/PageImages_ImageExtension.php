@@ -102,10 +102,12 @@ class PageImages_ImageExtension extends DataExtension
      * @param string $field String with EXIF field to be returned
      * @return EXIF data or null
      */
-    public function ExifData($field='DateTimeOriginal') {
+    public function ExifData($field='DateTimeOriginal')
+    {
         // only JPEG and TIFF files contain EXIF data
         $image_extension = strtolower($this->owner->Extension);
-        if (! in_array($image_extension, array('jpg', 'jpeg', 'tif', 'tiff'))) {
+        if (! in_array($image_extension, array('jpg', 'jpeg', 'tif', 'tiff')))
+        {
             return null;
         }
 
@@ -113,8 +115,19 @@ class PageImages_ImageExtension extends DataExtension
         $image_path = Director::getAbsFile($this->owner->Filename);
         $exif_data = @exif_read_data($image_path, 'EXIF', false, false);
         $exif_field = isset($exif_data[$field]) ? $exif_data[$field] : null;
-        //SS_Log::log($image_path.", DateTimeOriginal = ".$exif_field, SS_Log::WARN);
         return $exif_field;
+    }
+
+    /**
+     * Returns converted EXIF DateTimeOriginal.
+     *
+     * @param string $exifString String containing the EXIF DateTimeOriginal information
+     * @return string date as string
+     */
+    public function ExifDateString($exifString)
+    {
+      $exifPieces = explode(":", $exifString);
+      return $exifPieces[0] . "-" . $exifPieces[1] . "-" . $exifPieces[2] . ":" . $exifPieces[3] . ":" . $exifPieces[4];
     }
 
     /**
@@ -131,9 +144,8 @@ class PageImages_ImageExtension extends DataExtension
             // get exif original storage date if available
             $exif_date = $image->ExifData($field='DateTimeOriginal');
             $exif_date = is_null($exif_date) ? $image->Created : $exif_date;
-            SS_Log::log("image exif=".$image->ExifDate." exif=".$exif_date, SS_Log::WARN);
-            if($exif_date != $image->ExifDate){
-                SS_Log::log("writeExifDates for ".$images->count(), SS_Log::WARN);
+            if($image->ExifDateString($exif_date) != $image->ExifDate)
+            {
                 // update database field
                 $image->ExifDate = $exif_date;
                 $image->write();

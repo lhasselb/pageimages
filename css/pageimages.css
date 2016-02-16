@@ -11,5 +11,10 @@
 /* Style date */
 .ss-uploadfield .ss-uploadfield-item .ss-uploadfield-item-info .ss-uploadfield-item-name .date
 {
- color: #8d98a2; padding: 0 0 0 5px; display: inline; float: left;
+ color: #8d98a2; padding: 0 0 0 10px; display: inline; float: left;font-style:italic
+}
+
+.wide-title label.left
+{
+    width:auto;
 }

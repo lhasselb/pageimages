@@ -81,6 +81,10 @@ class PageImages_PageExtension extends DataExtension
 
         if ($this->owner->ShowImages) {
 
+            // Get the current member
+            $member = $this->getMember();
+            //SS_Log::log("Locale=".$member->Locale." DateFormat=".$member->DateFormat." TimeFormat=".$member->TimeFormat,SS_Log::WARN);
+
             // Obtain folder name
             $upload_folder_name = Config::inst()->get("PageImages_PageExtension", "upload_folder_name");
             // Obtain alowed image extensions
@@ -89,12 +93,8 @@ class PageImages_PageExtension extends DataExtension
             // Obtain alowed max file size
             $allowed_max_file_size = Config::inst()->get("PageImages_PageExtension", "allowed_max_file_size");
 
-            //SS_Log::log("upload_folder_name = ".$upload_folder_name, SS_Log::WARN);
-            //SS_Log::log("allowed_extensions = ".implode($allowed_extensions,","), SS_Log::WARN);
-            //SS_Log::log("allowed_extensions - gettype = ".gettype($allowed_extensions), SS_Log::WARN);
-
             // Create a sortable uploadfield called imageField with an translateable name (default name "Images")
-            $imageField = SortableUploadField::create("Images", _t("PageImages.IMAGES", "Images"));
+            $imageField = SortableUploadField::create("Images", _t("PageImages_PageExtension.IMAGES", "Images"));
 
             // Obtain user selected folder - if nothing selected yet folder ID is 0
             if ($this->owner->Folder()->ID != 0) {
@@ -125,7 +125,7 @@ class PageImages_PageExtension extends DataExtension
             // Warning before overwriting existing file (only relevant when Upload: replaceFile is true)
             $imageField->setOverwriteWarning(true);
             // Add a description to inform the user about limits
-            $imageField->setDescription(_t("PageImages.IMAGESUPLOADLIMIT", "Up to {count} image(s) ({extensions}) with a max. size of {size} MB per file.", array(
+            $imageField->setDescription(_t("PageImages_PageExtension.IMAGESUPLOADLIMIT", "Up to {count} image(s) ({extensions}) with a max. size of {size} MB per file.", array(
                 "count" => $this->owner->MaxImages,
                 "extensions" => implode(",", $imageField->getAllowedExtensions()),
                 "size" => $allowed_max_file_size / 1024 / 1024
@@ -144,12 +144,15 @@ class PageImages_PageExtension extends DataExtension
 
             // Display preselected folder
             if ($this->owner->Folder() && $this->owner->Folder()->ID != 0) {
-                $imageField->setTitle(_t("PageImages.IMAGESFOLDER", "Preselected folder: ") . $this->owner->Folder()->Name);
+                $imageField->setTitle(_t("PageImages_PageExtension.IMAGESFOLDER", "Preselected folder: <span style='font-weight: bold;'>{folder}</span>", array(
+                    "folder" => ltrim($this->owner->Folder()->getRelativePath(), '/assets/')
+                ))); // $this->owner->Folder()->Name
+                $imageField->addExtraClass('wide-title');
             } else
                 $imageField->setTitle("");
 
             // Create a dropdown using Sorter
-            $dropdownSorter = DropdownField::create("Sorter", _t("PageImages.IMAGESSORTER", "Sort imags by: "))->setSource($this->owner->dbObject("Sorter")
+            $dropdownSorter = DropdownField::create("Sorter", _t("PageImages_PageExtension.IMAGESSORTER", "Sort imags by: "))->setSource($this->owner->dbObject("Sorter")
                 ->enumValues($this->class));
             // Add additional class for jquery/entwine selector
             $dropdownSorter->addExtraClass("sorter");
@@ -159,7 +162,7 @@ class PageImages_PageExtension extends DataExtension
             }
 
             // Create a dropdown using SorterDir
-            $dropdownSorterDir = DropdownField::create("SorterDir", _t("PageImages.IMAGESSORTERDIR", "Sort direction: "))->setSource($this->owner->dbObject("SorterDir")
+            $dropdownSorterDir = DropdownField::create("SorterDir", _t("PageImages_PageExtension.IMAGESSORTERDIR", "Sort direction: "))->setSource($this->owner->dbObject("SorterDir")
                 ->enumValues($this->class));
             // Add additional class for jquery/entwine selector
             $dropdownSorterDir->addExtraClass("sorterdir");
@@ -171,7 +174,7 @@ class PageImages_PageExtension extends DataExtension
             // Create a tab title
             $imageTabTitle = "Images";
             // Create a translatable tab header
-            $imageTabHeader = _t("PageImages.IMAGETAB", "Page Images");
+            $imageTabHeader = _t("PageImages_PageExtension.IMAGETAB", "Page Images");
             // Create reference for fields added down below
             $imageTab = "Root." . $imageTabTitle . "";
 
@@ -201,10 +204,16 @@ class PageImages_PageExtension extends DataExtension
         if (Permission::checkMember($member, 'SITETREE_REORGANISE')) {
 
             // Create a nested fieldgroup for images
-            $images_group = FieldGroup::create(FieldGroup::create(CheckboxField::create("ShowImages", _t("PageImages.SHOWIMAGES", "Enable pageimages?"))), $settings_group = FieldGroup::create(FieldGroup::create(CheckboxField::create("CanUpload", _t("PageImages.CANUPLOAD", "Enable image upload?"))), FieldGroup::create(NumericFieldNotZero::create("MaxImages", _t("PageImages.MAXIMAGES", "Number of images per page"))), FieldGroup::create(TreeDropdownField::create("FolderID", _t("PageImages.CHOOSEIMAGEFOLDER", "Preselect folder:"), "Folder"))))->setTitle(_t("PageImages.IMAGETAB", "Images"));
+            $images_group = FieldGroup::create(
+                FieldGroup::create(CheckboxField::create("ShowImages", _t("PageImages_PageExtension.SHOWIMAGES", "Enable pageimages?"))),
+                $settings_group =
+                    FieldGroup::create(FieldGroup::create(CheckboxField::create("CanUpload", _t("PageImages_PageExtension.CANUPLOAD", "Enable image upload?"))),
+                    FieldGroup::create(NumericFieldNotZero::create("MaxImages", _t("PageImages_PageExtension.MAXIMAGES", "Number of images per page"))),
+                    FieldGroup::create(TreeDropdownField::create("FolderID", _t("PageImages_PageExtension.CHOOSEIMAGEFOLDER", "Preselect folder:"), "Folder")))
+            )->setTitle(_t("PageImages_PageExtension.IMAGETAB", "Images"));
 
             if (! $this->owner->ShowImages) {
-                $images_group->setRightTitle(_t("PageImages.IMAGETABHINT", "Show tab Images to manage additional page images."));
+                $images_group->setRightTitle(_t("PageImages_PageExtension.IMAGETABHINT", "Show tab Images to manage additional page images."));
                 $settings_group->addExtraClass("hidden");
             }
 
