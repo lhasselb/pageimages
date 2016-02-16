@@ -17,7 +17,6 @@ Uses a has_one relation to assign a folder containing your images. Offers [Uploa
 
 ## Configuration
 By default the extension is enabled for Pages.
-You can add the extension to other DataObjects by changing the configuration.
 See file "config.yml" within "/SS_ROOT/pageimages/_config" folder.
 Read more about [silverstripe configuration](http://doc.silverstripe.com/framework/en/topics/configuration).
 
@@ -29,7 +28,7 @@ If a parameter is not set, default value will be used:
 #  upload_folder_name: 'Uploads'
 
 # Set allowed extensions for images
-# Default to types known by file category image
+# Default = jpg,jpeg,gif,png
 #  allowed_extensions:
 #    - jpg
 #    - jpeg
