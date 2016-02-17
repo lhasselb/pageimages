@@ -3,7 +3,8 @@ Name: pageimages
 ---
 # pageimages configurable parameter(s):
 PageImages_PageExtension:
-# Set a specific folder name to upload to
+# Set a default folder name to upload to
+# Non existent folder will be created!
 # Default = Uploads
 #  upload_folder_name: 'Uploads'
 

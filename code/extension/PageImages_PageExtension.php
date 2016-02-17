@@ -81,37 +81,26 @@ class PageImages_PageExtension extends DataExtension
 
         if ($this->owner->ShowImages) {
 
-            // Get the current member
-            $member = $this->getMember();
-            //SS_Log::log("Locale=".$member->Locale." DateFormat=".$member->DateFormat." TimeFormat=".$member->TimeFormat,SS_Log::WARN);
-
-            // Obtain folder name
+            // Obtain configured default folder name
             $upload_folder_name = Config::inst()->get("PageImages_PageExtension", "upload_folder_name");
+            // Obtain user selected folder - if not selected yet folder ID = 0
+            if ($this->owner->Folder()->ID != 0) {
+                // Use complete path instead of folder name ($this->owner->Folder()->Name)!
+                $upload_folder_name = ltrim($this->owner->Folder()->getRelativePath(), '/assets/');
+            }
             // Obtain alowed image extensions
             $allowed_extensions = Config::inst()->get("PageImages_PageExtension", "allowed_extensions");
+            // Set a fallback if not configured
             if(empty($allowed_extensions)) $allowed_extensions = array("jpg", "jpeg", "gif", "png");
             // Obtain alowed max file size
             $allowed_max_file_size = Config::inst()->get("PageImages_PageExtension", "allowed_max_file_size");
 
             // Create a sortable uploadfield called imageField with an translateable name (default name "Images")
             $imageField = SortableUploadField::create("Images", _t("PageImages_PageExtension.IMAGES", "Images"));
-
-            // Obtain user selected folder - if nothing selected yet folder ID is 0
-            if ($this->owner->Folder()->ID != 0) {
-                // Use complete pathe instead of folder name ($this->owner->Folder()->Name)!
-                $selectedFolderPathName = ltrim($this->owner->Folder()->getRelativePath(), '/assets/');
-                // Use selected folder to upload images to
-                $imageField->setFolderName($selectedFolderPathName);
-                // Use selected folder to select images from
-                $imageField->setDisplayFolderName($selectedFolderPathName);
-            // No folder selected yet, check configured folder, if no configuration was set use default (Uploads)
-            } else {
-                // Use selected folder to upload images to
-                $imageField->setFolderName($upload_folder_name);
-                // Use selected folder to select images from
-                $imageField->setDisplayFolderName($upload_folder_name);
-            }
-
+            // Use selected folder to upload images to
+            $imageField->setFolderName($upload_folder_name);
+            // Use selected folder to select images from
+            $imageField->setDisplayFolderName($upload_folder_name);
             // Set configuration parameter "allowedMaxFileNumber"
             $imageField->setConfig("allowedMaxFileNumber", $this->owner->MaxImages);
             // Set can upload
@@ -134,13 +123,17 @@ class PageImages_PageExtension extends DataExtension
             // Change the editable fields, see PageImage->getCustomFields()
             $imageField->setFileEditFields("getCustomFields");
 
-            // User should be able to attach existing files when upload is diabled
+            // User should be able to attach existing files when upload is diabled - allow access to SilverStripe assets library
+            $imageField->setCanAttachExisting(true);
             if (! (bool) $this->owner->CanUpload) {
-                // allow access to SilverStripe assets library
-                $imageField->setCanAttachExisting(true);
                 // Don't show target filesystem folder on upload field
                 $imageField->setCanPreviewFolder(false);
             }
+
+            // Get the current member
+            //$member = $this->getMember();$folder = Folder::find_or_make($upload_folder_name);
+            //SS_Log::log("folder=".$folder->Name." ,User ".$member->Name." canView?".$folder->canView($member),SS_Log::WARN);
+            //SS_Log::log("Locale=".$member->Locale." DateFormat=".$member->DateFormat." TimeFormat=".$member->TimeFormat,SS_Log::WARN);
 
             // Display preselected folder
             if ($this->owner->Folder() && $this->owner->Folder()->ID != 0) {
@@ -252,7 +245,7 @@ class PageImages_PageExtension extends DataExtension
     function onAfterWrite()
     {
         parent::onAfterWrite();
-        // Update Image.Size database fields of all images assigned to actual page if image sort option is set to "Size"
+        // Update Image.Size database fields of all images assigned to actual page if image sort option is set to "ImageSize"
         if ($this->owner->Sorter == "ImageSize" && $this->owner->Images()->count() > 0) {
             PageImages_ImageExtension::writeSize($this->owner->Images());
         }

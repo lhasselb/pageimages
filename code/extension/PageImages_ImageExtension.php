@@ -49,13 +49,22 @@ class PageImages_ImageExtension extends DataExtension
      */
     function canEdit($member)
     {
+        // Add access for Owner
+        if($member->ID == $this->owner->Owner()->ID) return true;
         // WARNING! This affects permissions on ALL images. Setting this incorrectly can restrict
         // access to authorised users or unintentionally give access to unauthorised users if set incorrectly.
         return Permission::check('CMS_ACCESS_AssetAdmin');
     }
 
+    /**
+     * By default Image::canDelete and Image::canEdit
+     * do not require admin privileges,
+     * so make sure you override the methods in your Image extension class.
+     */
     function canDelete($member)
     {
+        // Add access for Owner
+        if($member->ID == $this->owner->Owner()->ID) return true;
         // WARNING! This affects permissions on ALL images. Setting this incorrectly can restrict
         // access to authorised users or unintentionally give access to unauthorised users if set incorrectly.
         return Permission::check('CMS_ACCESS_AssetAdmin');
