@@ -32,7 +32,7 @@ class PageImages_ImageExtension extends DataExtension
      * {@inheritdoc}
      *
      */
-    function getCustomFields()
+    public function getCustomFields()
     {
         $fields = new FieldList();
         $fields->push(new TextField('Title', _t('PageImage.TITLE', 'Title')));
@@ -46,8 +46,10 @@ class PageImages_ImageExtension extends DataExtension
      * By default Image::canDelete and Image::canEdit
      * do not require admin privileges,
      * so make sure you override the methods in your Image extension class.
+     *
+     * {@inheritdoc}
      */
-    function canEdit($member)
+    public function canEdit($member)
     {
         // Add access for Owner
         if($member->ID == $this->owner->Owner()->ID) return true;
@@ -60,8 +62,10 @@ class PageImages_ImageExtension extends DataExtension
      * By default Image::canDelete and Image::canEdit
      * do not require admin privileges,
      * so make sure you override the methods in your Image extension class.
+     *
+     * {@inheritdoc}
      */
-    function canDelete($member)
+    public function canDelete($member)
     {
         // Add access for Owner
         if($member->ID == $this->owner->Owner()->ID) return true;
