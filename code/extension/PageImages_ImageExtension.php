@@ -43,9 +43,8 @@ class PageImages_ImageExtension extends DataExtension
     }
 
     /**
-     * By default Image::canDelete and Image::canEdit
-     * do not require admin privileges,
-     * so make sure you override the methods in your Image extension class.
+     * By default Image::canEdit does not require admin privileges.
+     * Limit access to owner and CMS_ACCESS_AssetAdmin.
      *
      * {@inheritdoc}
      */
@@ -59,9 +58,8 @@ class PageImages_ImageExtension extends DataExtension
     }
 
     /**
-     * By default Image::canDelete and Image::canEdit
-     * do not require admin privileges,
-     * so make sure you override the methods in your Image extension class.
+     * By default Image::canDelete does not require admin privileges.
+     * Limit access to owner and CMS_ACCESS_AssetAdmin.
      *
      * {@inheritdoc}
      */
@@ -91,8 +89,8 @@ class PageImages_ImageExtension extends DataExtension
     /**
      * Creates/updates the Size database column of all image objects.
      *
-     * @param integer $parentId
-     *            (if set only image objects assigned to this ID are updated)
+     * @param array $images update only given images
+     *
      * @return void
      */
     public static function writeSize($images = null)
@@ -146,7 +144,7 @@ class PageImages_ImageExtension extends DataExtension
     /**
      * Creates/updates the ExifDate database column of all image objects.
      *
-     * @param integer $parentId (if set only image objects assigned to this ID are updated)
+     * @param array $images update only given images
      * @return void
      */
     public static function writeExifDates($images=null)

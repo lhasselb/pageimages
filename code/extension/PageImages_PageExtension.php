@@ -78,7 +78,7 @@ class PageImages_PageExtension extends DataExtension
         // CSS reference has been moved to config.yml
         // Requirements::css(PAGEIMAGES_DIR . "/css/PageImages.css");
         Requirements::javascript(PAGEIMAGES_DIR . "/javascript/PageImages.js");
-
+        // Only if enabled
         if ($this->owner->ShowImages) {
 
             // Obtain configured default folder name
