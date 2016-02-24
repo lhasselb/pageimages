@@ -7,7 +7,7 @@
  * @subpackage extension
  * @author      [SYBEHA] (http://sybeha.de)
  * @copyright   [SYBEHA]
- * @license     http://www.gnu.org/licenses/gpl-3.0.html
+ * @license     MIT-style license http://opensource.org/licenses/MIT
  *
  */
 class PageImages_ImageExtension extends DataExtension
@@ -26,6 +26,39 @@ class PageImages_ImageExtension extends DataExtension
     private static $belongs_many_many = array(
         'Pages' => 'Page'
     );
+
+    /**
+     * @config @var int max width for uploaded image
+     */
+    public static $max_width = 1600;
+
+    /**
+     * @config @var int max height for uploaded image
+     */
+    public static $max_height = 1200;
+
+    /**
+     * @config @var boolean respect exif orienttaion
+     */
+    public static $exif_rotation = true;
+
+    /**
+     *
+     * {@inheritdoc}
+     *
+     */
+    public function onBeforeWrite() {
+        $this->addSize();
+        $this->addExifDates();
+    }
+    /**
+     *
+     * {@inheritdoc}
+     *
+     */
+    public function onAfterWrite() {
+        $this->ScaleUpload();
+    }
 
     /**
      *
@@ -93,7 +126,7 @@ class PageImages_ImageExtension extends DataExtension
      *
      * @return void
      */
-    public static function writeSize($images = null)
+    public static function write_size($images = null)
     {
         if (! $images->exists()) return false;
             // write/update Image.Size database columns
@@ -106,6 +139,15 @@ class PageImages_ImageExtension extends DataExtension
             }
         }
     }
+
+    protected function addSize()
+    {
+        $size = $this->owner->getAbsoluteSize();
+        if ($size != $this->owner->ImageSize) {
+            $this->owner->ImageSize = $size;
+        }
+    }
+
 
     /**
      * Returns EXIF info defined by $field from images (JPEG, TIFF) stored by the camera.
@@ -121,9 +163,9 @@ class PageImages_ImageExtension extends DataExtension
         {
             return null;
         }
-
         // extract requested EXIF field
         $image_path = Director::getAbsFile($this->owner->Filename);
+        //$image_path = $this->owner->getFullPath();
         $exif_data = @exif_read_data($image_path, 'EXIF', false, false);
         $exif_field = isset($exif_data[$field]) ? $exif_data[$field] : null;
         return $exif_field;
@@ -147,7 +189,7 @@ class PageImages_ImageExtension extends DataExtension
      * @param array $images update only given images
      * @return void
      */
-    public static function writeExifDates($images=null)
+    public static function write_exif_dates($images=null)
     {
         if (! $images->exists()) return false;
         // write/update Image.ExifDate database columns
@@ -161,8 +203,91 @@ class PageImages_ImageExtension extends DataExtension
                 $image->ExifDate = $exif_date;
                 $image->write();
             }
-
         }
     }
+
+    protected function addExifDates()
+    {
+            $exif_date = $this->owner->ExifData($field='DateTimeOriginal');
+            $exif_date = is_null($exif_date) ? $image->Created : $exif_date;
+            if($this->owner->ExifDateString($exif_date) != $this->owner->ExifDate)
+            {
+                $this->owner->ExifDate = $exif_date;
+            }
+    }
+
+    public function getMaxWidth() {
+        $w = Config::inst()->get('ScaledUploads', 'max-width');
+        return ($w) ? $w : self::$max_width;
+    }
+
+    public function getMaxHeight() {
+        $h = Config::inst()->get('ScaledUploads', 'max-height');
+        return ($h) ? $h : self::$max_height;
+    }
+
+    public function getAutoRotate() {
+        $r = Config::inst()->get('ScaledUploads', 'auto-rotate');
+        if ($r === 0 || $r == 'false') return false;
+        return self::$exif_rotation;
+    }
+
+    public function ScaleUpload() {
+        $extension = strtolower($this->owner->getExtension());
+        if($this->owner->getHeight() > $this->getMaxHeight() || $this->owner->getWidth() > $this->getMaxWidth()) {
+            $original = $this->owner->getFullPath();
+            $resampled = $original . '.tmp.' . $extension;
+            $gd = new GD($original);
+            /* Backwards compatibility with SilverStripe 3.0 */
+            $image_loaded = (method_exists('GD', 'hasImageResource')) ? $gd->hasImageResource() : $gd->hasGD();
+            if ($image_loaded) {
+                /* Clone original */
+                $transformed = $gd;
+                /* If rotation allowed & JPG, test to see if orientation needs switching */
+                if ($this->getAutoRotate() && preg_match('/jpe?g/i', $extension)) {
+                    $switchorientation = $this->exifRotation($original);
+                    if ($switchorientation) {
+                        $transformed = $transformed->rotate($switchorientation);
+                    }
+                }
+                /* Resize to max values */
+                if ($transformed) {
+                    $transformed = $transformed->resizeRatio($this->getMaxWidth(), $this->getMaxHeight());
+                }
+                /* Overwrite original upload with resampled */
+                if ($transformed) {
+                    $transformed->writeTo($resampled);
+                    unlink($original);
+                    rename($resampled, $original);
+                }
+            }
+        }
+    }
+
+    /*
+     * exifRotation - return the exif rotation
+     * @param string $FileName
+     * @return int false|angle
+     */
+    public function exifRotation($file) {
+        $exif = @exif_read_data($file);
+        if (!$exif) return false;
+        $ort = @$exif['IFD0']['Orientation'];
+        if (!$ort) $ort = @$exif['Orientation'];
+        switch($ort) {
+            case 3: // image upside down
+                return '180';
+            break;
+            case 6: // 90 rotate right & switch max sizes
+                return '-90';
+            break;
+            case 8: // 90 rotate left & switch max sizes
+                return '90';
+            break;
+            default:
+                return false;
+        }
+    }
+
 }
 // EOF

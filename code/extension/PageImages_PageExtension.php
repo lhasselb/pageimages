@@ -7,7 +7,7 @@
  * @subpackage extension
  * @author      [SYBEHA] (http://sybeha.de)
  * @copyright   [SYBEHA]
- * @license     http://www.gnu.org/licenses/gpl-3.0.html
+ * @license     MIT-style license http://opensource.org/licenses/MIT
  *
  */
 class PageImages_PageExtension extends DataExtension
@@ -245,14 +245,15 @@ class PageImages_PageExtension extends DataExtension
     function onAfterWrite()
     {
         parent::onAfterWrite();
+        // Moved both to image extension due to resize of images which removes exif data
         // Update Image.Size database fields of all images assigned to actual page if image sort option is set to "ImageSize"
-        if ($this->owner->Sorter == "ImageSize" && $this->owner->Images()->count() > 0) {
-            PageImages_ImageExtension::writeSize($this->owner->Images());
-        }
+        /*if ($this->owner->Sorter == "ImageSize" && $this->owner->Images()->count() > 0) {
+            PageImages_ImageExtension::write_size($this->owner->Images());
+        }*/
         // Update Image.ExifDate database fields of all images assigned to actual page if image sort option is set to  "Date"
-        if ($this->owner->Sorter == "Date" && $this->owner->Images()->count() > 0) {
-            PageImages_ImageExtension::writeExifDates($this->owner->Images());
-        }
+        /*if ($this->owner->Sorter == "Date" && $this->owner->Images()->count() > 0) {
+            PageImages_ImageExtension::write_exif_dates($this->owner->Images());
+        }*/
     }
 
     /**
