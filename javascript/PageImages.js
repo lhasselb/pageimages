@@ -57,7 +57,7 @@
             onmatch: function() {
                 var sorter = $('select.dropdown.sorter').val().toLowerCase();
                 var sorterdir = $('select.dropdown.sorterdir').val().toLowerCase();
-                var imagesList = $('ul.ss-uploadfield-files.files li');
+                var imagesList = $('#Form_EditForm_Images_Holder ul.ss-uploadfield-files.files li');
                 this.html(sortedList(imagesList,sorter,sorterdir));
                 // Enable drag n drop sorting
                 if(sorter == 'sortorder') this._super();
