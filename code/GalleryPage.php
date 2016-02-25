@@ -13,7 +13,7 @@ class GalleryPage extends Page
 class GalleryPage_Controller extends Page_Controller
 {
     /**
-     * Inlcudes the CSS and Javascript files required by the cwsoft-foldergallery module
+     * Inlcudes the CSS and Javascript files required by galleria.io
      *
      * @return void
      */
@@ -26,32 +26,16 @@ class GalleryPage_Controller extends Page_Controller
         Requirements::css("pageimages/css/Gallery.css");
 
         Requirements::customScript("
-                // Initialize Galleria
-                if($('.galleria').length != 0){
-                    Galleria.run('.galleria',{
-                        variation: 'light',
-                        transition: 'flash', //fade,flash,pulse,slide,fadeslide
-                        transitionSpeed: 400,
-                        _locale: {
-                            show_thumbnails: 'Zeige Miniaturbilder',
-                            hide_thumbnails: 'Verberge Miniaturbilder',
-                            play: 'Starte Diavorführung',
-                            pause: 'Pause Diavorführung',
-                            enter_fullscreen: 'Öffne Vollbildmodus',
-                            exit_fullscreen: 'Schließe Vollbildmodus',
-                            popout_image: 'Bild in eigenem Fenster öffnen',
-                            showing_image: 'Bild %s von %s'
-                        },
-                    });
-                    Galleria.ready(function() {
-                        // Default to Thumbnail view
-                        this.$('thumblink').click();
-                        // Slideshow speed
-                        this.bind('image', function(e) {
-                            this.setPlaytime(4000); // 10000 = 10 seconds
-                        });
-                    });
-                }
-            ");
+            Galleria.run('#galleria', {
+                responsive: true,
+                imageCrop: true,
+                transition: 'fade',
+                height:0.7,
+                lightbox: true,
+                swipe: true,
+                show: 0,
+                autoplay: 5000
+            });
+        ");
     }
 }
