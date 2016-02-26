@@ -19,6 +19,9 @@ PageImages_PageExtension:
 # Set allowed maximum filesize for images
 # Default = 1048576 = 1MB (1* 1024 * 1024)
 #  allowed_max_file_size: 1048576
+# Set usage of galeria.io JS library
+# Default = true
+#  include_galleria_io: true
 
 # Extend DataObject Page
 Page:

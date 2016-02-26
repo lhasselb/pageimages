@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Extends SilverStripe page object to provide additional functionality.
+ * Extends SilverStripe page object to provide additional images.
  *
  * @package pageimages
  * @subpackage extension
@@ -15,7 +15,7 @@ class PageImages_PageExtension extends DataExtension
 
     // Add 5 fields (columns to [OWNER] table)
     private static $db = array(
-        // Store if enabled / tab should be shown
+        // Store if additional images tab should be enabled
         "ShowImages" => "Boolean(1)",
         // Store sort attribute used
         "Sorter" => "i18nEnum('SortOrder, Title, Name, ID, Date, ImageSize')",
@@ -24,7 +24,9 @@ class PageImages_PageExtension extends DataExtension
         // Store max number of images
         "MaxImages" => "Int(10)",
         // Store if user can upload "external" images
-        "CanUpload" => "Boolean(1)"
+        "CanUpload" => "Boolean(1)",
+        // Store if gallery
+        "IsGallery" => "Boolean()"
     );
 
     // Add column FolderID to [OWNER] table
@@ -65,8 +67,12 @@ class PageImages_PageExtension extends DataExtension
     /**
      * @config @var int max file size for images
      */
-    private static $allowed_max_file_size = 1048576;
-    // 1 MB in bytes;
+    private static $allowed_max_file_size = 1048576;// 1 MB in bytes;
+
+    /**
+     * @config @var array list of allowed extensions
+     */
+    private static $include_galleria_io = true;
 
     /**
      *
@@ -202,7 +208,8 @@ class PageImages_PageExtension extends DataExtension
                 $settings_group =
                     FieldGroup::create(FieldGroup::create(CheckboxField::create("CanUpload", _t("PageImages_PageExtension.CANUPLOAD", "Enable image upload?"))),
                     FieldGroup::create(NumericFieldNotZero::create("MaxImages", _t("PageImages_PageExtension.MAXIMAGES", "Number of images per page"))),
-                    FieldGroup::create(TreeDropdownField::create("FolderID", _t("PageImages_PageExtension.CHOOSEIMAGEFOLDER", "Preselect folder:"), "Folder")))
+                    FieldGroup::create(TreeDropdownField::create("FolderID", _t("PageImages_PageExtension.CHOOSEIMAGEFOLDER", "Preselect folder:"), "Folder"))),
+                    FieldGroup::create(CheckboxField::create("IsGallery", _t("PageImages_PageExtension.ISGALLERY", "Add galleria.io JS")))
             )->setTitle(_t("PageImages_PageExtension.IMAGETAB", "Images"));
 
             if (! $this->owner->ShowImages) {
@@ -245,6 +252,7 @@ class PageImages_PageExtension extends DataExtension
     function onAfterWrite()
     {
         parent::onAfterWrite();
+        // TODO: Add a possibility to run this within interface for images already existing
         // Moved both to image extension due to resize of images which removes exif data
         // Update Image.Size database fields of all images assigned to actual page if image sort option is set to "ImageSize"
         /*if ($this->owner->Sorter == "ImageSize" && $this->owner->Images()->count() > 0) {
@@ -264,7 +272,6 @@ class PageImages_PageExtension extends DataExtension
     function onBeforeWrite()
     {
         parent::onBeforeWrite();
-
         // Reset default Sorter if all images have been removed
         if ($this->owner->Images()->count() == 0) {
             $this->owner->Sorter = "SortOrder";
@@ -287,7 +294,7 @@ class PageImages_PageExtension extends DataExtension
     }
 
     /**
-     * Return wheter enabled or not
+     * Return whether enabled or not
      *
      * @return Boolean
      */
@@ -324,6 +331,7 @@ class PageImages_PageExtension extends DataExtension
     }
 
     /**
+     * TODO: Add sorting for folder based images
      * Returns all images from folder set
      *
      * @return PageImages
@@ -334,5 +342,32 @@ class PageImages_PageExtension extends DataExtension
         // SS_Log::log("folder = ".$folder->ID, SS_Log::WARN);
         return $folder ? DataObject::get("Image", "ParentID = '{$folder->ID}'") : false;
     }
+
+    public function contentcontrollerInit() {
+        $include_galleria_io = Config::inst()->get("PageImages_PageExtension", "include_galleria_io");
+        //SS_Log::log("include_galleria_io param =".$include_galleria_io,SS_Log::WARN);
+        //SS_Log::log("this->owner->IsGallery =".$this->owner->IsGallery,SS_Log::WARN);
+        if((bool)$include_galleria_io && (bool)$this->owner->IsGallery)
+        {
+            Requirements::javascript("framework/thirdparty/jquery/jquery.min.js");
+            Requirements::javascript("pageimages/javascript/galleria/galleria-1.4.2.min.js");
+            Requirements::javascript("pageimages/javascript/galleria/themes/classic/galleria.classic.min.js");
+            Requirements::css("pageimages/javascript/galleria/themes/classic/galleria.classic.css");
+            Requirements::css("pageimages/css/Gallery.css");
+            Requirements::customScript("
+                Galleria.run('#galleria', {
+                    responsive: true,
+                    imageCrop: true,
+                    transition: 'fade',
+                    height:0.5625,
+                    lightbox: true,
+                    swipe: true,
+                    show: 0,
+                    /*autoplay: 5000*/
+                });
+            ");
+        }
+    }
+
 }
 // EOF
