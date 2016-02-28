@@ -17,7 +17,6 @@
 		"bummzack/sortablefile": "*"
 	},
 	"suggest": {
-		"heyday/silverstripe-optimisedimage": "*",
 		"jonom/focuspoint": "*"
 	}
 }

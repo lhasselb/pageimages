@@ -18,7 +18,7 @@ class PageImages_ImageExtension extends DataExtension
         // Store Image size
         'ImageSize' => 'int',
         // Store HTML Caption
-        'Caption' => 'Text',
+        'Caption' => 'HTMLText',
         // Store Exif date
         'ExifDate' => 'SS_Datetime'
     );
@@ -136,6 +136,7 @@ class PageImages_ImageExtension extends DataExtension
             if ($size != $image->ImageSize) {
                 $image->ImageSize = $size;
                 $image->write();
+                //SS_Log::log("Done write_size for ".$image->Name,SS_Log::WARN);
             }
         }
     }
@@ -179,8 +180,11 @@ class PageImages_ImageExtension extends DataExtension
      */
     public function ExifDateString($exifString)
     {
-      $exifPieces = explode(":", $exifString);
-      return $exifPieces[0] . "-" . $exifPieces[1] . "-" . $exifPieces[2] . ":" . $exifPieces[3] . ":" . $exifPieces[4];
+        SS_Log::log("ExifDateString ".$exifString ,SS_Log::WARN);
+        if (strpos($exifString, "-") === false) {
+            $exifPieces = explode(":", $exifString);
+            return $exifPieces[0] . "-" . $exifPieces[1] . "-" . $exifPieces[2] . ":" . $exifPieces[3] . ":" . $exifPieces[4];
+        }
     }
 
     /**
@@ -196,12 +200,13 @@ class PageImages_ImageExtension extends DataExtension
         foreach ($images as $image) {
             // get exif original storage date if available
             $exif_date = $image->ExifData($field='DateTimeOriginal');
-            $exif_date = is_null($exif_date) ? $image->Created : $exif_date;
-            if($image->ExifDateString($exif_date) != $image->ExifDate)
+            $exif_date = is_null($exif_date) ? $image->Created : $image->ExifDateString($exif_date);
+            if($exif_date != $image->ExifDate)
             {
                 // update database field
                 $image->ExifDate = $exif_date;
                 $image->write();
+                //SS_Log::log("Done write_exif_dates for ".$image->Name,SS_Log::WARN);
             }
         }
     }
@@ -209,7 +214,7 @@ class PageImages_ImageExtension extends DataExtension
     protected function addExifDates()
     {
             $exif_date = $this->owner->ExifData($field='DateTimeOriginal');
-            $exif_date = is_null($exif_date) ? $image->Created : $exif_date;
+            $exif_date = is_null($exif_date) ? $this->owner->Created : $image->ExifDateString($exif_date);
             if($this->owner->ExifDateString($exif_date) != $this->owner->ExifDate)
             {
                 $this->owner->ExifDate = $exif_date;

@@ -136,11 +136,6 @@ class PageImages_PageExtension extends DataExtension
                 $imageField->setCanPreviewFolder(false);
             }
 
-            // Get the current member
-            //$member = $this->getMember();$folder = Folder::find_or_make($upload_folder_name);
-            //SS_Log::log("folder=".$folder->Name." ,User ".$member->Name." canView?".$folder->canView($member),SS_Log::WARN);
-            //SS_Log::log("Locale=".$member->Locale." DateFormat=".$member->DateFormat." TimeFormat=".$member->TimeFormat,SS_Log::WARN);
-
             // Display preselected folder
             if ($this->owner->Folder() && $this->owner->Folder()->ID != 0) {
                 $imageField->setTitle(_t("PageImages_PageExtension.IMAGESFOLDER", "Preselected folder: <span style='font-weight: bold;'>{folder}</span>", array(
@@ -204,12 +199,13 @@ class PageImages_PageExtension extends DataExtension
 
             // Create a nested fieldgroup for images
             $images_group = FieldGroup::create(
-                FieldGroup::create(CheckboxField::create("ShowImages", _t("PageImages_PageExtension.SHOWIMAGES", "Enable pageimages?"))),
-                $settings_group =
-                    FieldGroup::create(FieldGroup::create(CheckboxField::create("CanUpload", _t("PageImages_PageExtension.CANUPLOAD", "Enable image upload?"))),
-                    FieldGroup::create(NumericFieldNotZero::create("MaxImages", _t("PageImages_PageExtension.MAXIMAGES", "Number of images per page"))),
-                    FieldGroup::create(TreeDropdownField::create("FolderID", _t("PageImages_PageExtension.CHOOSEIMAGEFOLDER", "Preselect folder:"), "Folder"))),
-                    FieldGroup::create(CheckboxField::create("IsGallery", _t("PageImages_PageExtension.ISGALLERY", "Add galleria.io JS")))
+                CheckboxField::create("ShowImages", _t("PageImages_PageExtension.SHOWIMAGES", "Enable pageimages?")),
+                $settings_group = FieldGroup::create(
+                    CheckboxField::create("CanUpload", _t("PageImages_PageExtension.CANUPLOAD", "Enable image upload?")),
+                    NumericFieldNotZero::create("MaxImages", _t("PageImages_PageExtension.MAXIMAGES", "Number of images per page")),
+                    TreeDropdownField::create("FolderID", _t("PageImages_PageExtension.CHOOSEIMAGEFOLDER", "Preselect folder:"),"Folder"),
+                    CheckboxField::create("IsGallery", _t("PageImages_PageExtension.ISGALLERY", "Add galleria.io JS"))
+                )->addExtraClass("settings")
             )->setTitle(_t("PageImages_PageExtension.IMAGETAB", "Images"));
 
             if (! $this->owner->ShowImages) {
@@ -252,16 +248,15 @@ class PageImages_PageExtension extends DataExtension
     function onAfterWrite()
     {
         parent::onAfterWrite();
-        // TODO: Add a possibility to run this within interface for images already existing
-        // Moved both to image extension due to resize of images which removes exif data
+
         // Update Image.Size database fields of all images assigned to actual page if image sort option is set to "ImageSize"
-        /*if ($this->owner->Sorter == "ImageSize" && $this->owner->Images()->count() > 0) {
+        if ($this->owner->Sorter == "ImageSize" && $this->owner->Images()->count() > 0) {
             PageImages_ImageExtension::write_size($this->owner->Images());
-        }*/
+        }
         // Update Image.ExifDate database fields of all images assigned to actual page if image sort option is set to  "Date"
-        /*if ($this->owner->Sorter == "Date" && $this->owner->Images()->count() > 0) {
+        if ($this->owner->Sorter == "Date" && $this->owner->Images()->count() > 0) {
             PageImages_ImageExtension::write_exif_dates($this->owner->Images());
-        }*/
+        }
     }
 
     /**
@@ -279,7 +274,7 @@ class PageImages_PageExtension extends DataExtension
         }
 
         // Extension has been disabled - Clean up!
-        if (! $this->owner->ShowImages && $this->owner->Folder()->ID != 0) {
+        if (!$this->owner->ShowImages && $this->owner->Folder()->ID != 0) {
             $this->owner->Sorter = "SortOrder";
             $this->owner->SorterDir = "ASC";
             $this->owner->CanUpload = 1;
@@ -290,6 +285,8 @@ class PageImages_PageExtension extends DataExtension
             }
             // Attention: Set has_one relation to 0 again
             $this->owner->FolderID = 0;
+            // Remove frontend JS
+            $this->owner->IsGallery = 0;
         }
     }
 
@@ -313,7 +310,10 @@ class PageImages_PageExtension extends DataExtension
         if ($this->owner->Sorter == "SortOrder") {
             return $this->owner->Images()->Sort($this->owner->Sorter);
         } else {
-            return $this->owner->Images()->Sort($this->owner->Sorter, $this->owner->SorterDir);
+            // Date should be ExifDate
+            $sorter = $this->owner->Sorter;
+            $sorter = ($sorter == "Date") ? "ExifDate" : $sorter;
+            return $this->owner->Images()->Sort($sorter, $this->owner->SorterDir);
         }
     }
 
@@ -343,29 +343,48 @@ class PageImages_PageExtension extends DataExtension
         return $folder ? DataObject::get("Image", "ParentID = '{$folder->ID}'") : false;
     }
 
-    public function contentcontrollerInit() {
+    /**
+     * Utility to create a JSON string from image properties
+     * @param  SSList $images a list of images
+     * @return String $json string containing json format
+     */
+    protected function imageToJSON($images)
+    {
+        // CHeck if jonom/silverstripe-focuspoint
+        $focuspoint = (class_exists('FocusPointImage')) ? true : false;
+        $json = "";
+        foreach ($images as $key => $value) {
+            $json .= "{";
+            $json .= $focuspoint ? "thumb:'".$value->CroppedFocusedImage(60,40)->URL."'," : "thumb:'".$value->CroppedImage(60,40)->URL."',";
+            $json .= $focuspoint ? "image:'".$value->CroppedFocusedImage(1024,768)->URL."'," : "image:'".$value->CroppedImage(1024,768)->URL."',";
+            $json .= "big:'".$value->URL."',";
+            $json .= "title:'".$value->Title."',";
+            $json .= "description:'".$value->NiceTitle."',";
+            if(!empty($value->Caption)) $json .= "layer:'<div class=\"overlay\">".$value->Caption."</div>',";
+            $json .= "}";
+            if($value != $images->last()) $json .= ",";
+        }
+        return $json;
+    }
+
+    /**
+     *
+     * {@inheritdoc}
+     *
+     */
+    public function contentcontrollerInit()
+    {
         $include_galleria_io = Config::inst()->get("PageImages_PageExtension", "include_galleria_io");
-        //SS_Log::log("include_galleria_io param =".$include_galleria_io,SS_Log::WARN);
-        //SS_Log::log("this->owner->IsGallery =".$this->owner->IsGallery,SS_Log::WARN);
         if((bool)$include_galleria_io && (bool)$this->owner->IsGallery)
         {
             Requirements::javascript("framework/thirdparty/jquery/jquery.min.js");
-            Requirements::javascript("pageimages/javascript/galleria/galleria-1.4.2.min.js");
-            Requirements::javascript("pageimages/javascript/galleria/themes/classic/galleria.classic.min.js");
-            Requirements::css("pageimages/javascript/galleria/themes/classic/galleria.classic.css");
-            Requirements::css("pageimages/css/Gallery.css");
-            Requirements::customScript("
-                Galleria.run('#galleria', {
-                    responsive: true,
-                    imageCrop: true,
-                    transition: 'fade',
-                    height:0.5625,
-                    lightbox: true,
-                    swipe: true,
-                    show: 0,
-                    /*autoplay: 5000*/
-                });
-            ");
+            Requirements::javascript(PAGEIMAGES_DIR . "/javascript/galleria/galleria-1.4.2.min.js");
+            Requirements::javascript(PAGEIMAGES_DIR . "/javascript/galleria/themes/classic/galleria.classic.min.js");
+            Requirements::css(PAGEIMAGES_DIR . "/javascript/galleria/themes/classic/galleria.classic.css");
+            Requirements::css(PAGEIMAGES_DIR . "/css/Gallery.css");
+            // Prepare data for replacing JS variables
+            $vars = array("data" => $this->imageToJSON($this->SortedImages()));
+            Requirements::javascriptTemplate(PAGEIMAGES_DIR . "/javascript/PageImagesGalleria.js",$vars);
         }
     }
 

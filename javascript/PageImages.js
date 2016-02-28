@@ -3,8 +3,7 @@
  * ========================================
  * Add features to cms backend
  *
- * @package silverstripe
- * @subpackage pageimage
+ * @package pageimage
  *
  * @author guggelimehl [at] gmail.com
  *
@@ -134,11 +133,10 @@
          */
         $('input#Form_EditForm_ShowImages').entwine({
             onchange: function() {
-                var label = $('label.fieldholder-small-label[for=Form_EditForm_MaxImages]');
                 if ($('input#Form_EditForm_ShowImages').is(':checked')) {
-                    label.closest('.fieldgroup-field').show();
+                    $('.settings').show();
                 } else {
-                    label.closest('.fieldgroup-field').hide();
+                    $('.settings').hide();
                 }
                 this._super();
             }
