@@ -18,7 +18,7 @@ de:
     Title: "Titel"
     Name: "Name"
     ID: "ID (Reihenfolge in der Datenbank)"
-    Date: "Date"
+    ExifDate: "Datum"
     ImageSize: "Größe"
 # SorterDir (Enum) translation
     ASC: "Aufsteigend"

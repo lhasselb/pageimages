@@ -20,7 +20,7 @@
 /**
  * Run Galleria witth options
  * See all options on http://galleria.io/docs/options/#list-of-options
- * @type {[type]}
+ * @type {Galleria}
  */
     Galleria.run('#galleria', {
         dataSource: data,
@@ -38,16 +38,21 @@
         show: 0,
         showInfo: false,
         _hideDock: Galleria.TOUCH ? false : true,
-        //maxScaleRatio: 1,
         /*autoplay: 5000*/
-        extend: function(options) {
-            var gallery = this;
-            $('#play').click(function() {
-                //console.log('play clicked');
-                gallery.playToggle();
-            });
-        }
+
     });
     Galleria.ready(function(){
-        this.lazyLoadChunks(5,1000);
+        this.lazyLoadChunks(10,1000);
+        /*
+        this.addElement('play');
+        this.appendChild('stage','play');
+        var btn = this.$('play').css('color', 'white').text('PAUSE').click(function() { gallery.playToggle(); });
+        this.bind('play', function() {
+           btn.text('PLAY');
+           btn.addClass('playing');
+        }).bind('pause', function() {
+           btn.removeClass('playing');
+        });
+           this.addIdleState(this.get('play'), { opacity:0 });
+        */
     });

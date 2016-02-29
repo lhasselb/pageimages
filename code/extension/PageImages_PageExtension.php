@@ -18,7 +18,7 @@ class PageImages_PageExtension extends DataExtension
         // Store if additional images tab should be enabled
         "ShowImages" => "Boolean(1)",
         // Store sort attribute used
-        "Sorter" => "i18nEnum('SortOrder, Title, Name, ID, Date, ImageSize')",
+        "Sorter" => "i18nEnum('SortOrder, Title, Name, ID, ExifDate, ImageSize')",
         // Store sort direction
         "SorterDir" => "i18nEnum('ASC, DESC')",
         // Store max number of images
@@ -253,8 +253,8 @@ class PageImages_PageExtension extends DataExtension
         if ($this->owner->Sorter == "ImageSize" && $this->owner->Images()->count() > 0) {
             PageImages_ImageExtension::write_size($this->owner->Images());
         }
-        // Update Image.ExifDate database fields of all images assigned to actual page if image sort option is set to  "Date"
-        if ($this->owner->Sorter == "Date" && $this->owner->Images()->count() > 0) {
+        // Update Image.ExifDate database fields of all images assigned to actual page if image sort option is set to  "ExifDate"
+        if ($this->owner->Sorter == "ExifDate" && $this->owner->Images()->count() > 0) {
             PageImages_ImageExtension::write_exif_dates($this->owner->Images());
         }
     }
@@ -312,7 +312,7 @@ class PageImages_PageExtension extends DataExtension
         } else {
             // Date should be ExifDate
             $sorter = $this->owner->Sorter;
-            $sorter = ($sorter == "Date") ? "ExifDate" : $sorter;
+            //$sorter = ($sorter == "Date") ? "ExifDate" : $sorter;
             return $this->owner->Images()->Sort($sorter, $this->owner->SorterDir);
         }
     }
@@ -356,7 +356,7 @@ class PageImages_PageExtension extends DataExtension
         foreach ($images as $key => $value) {
             $json .= "{";
             $json .= $focuspoint ? "thumb:'".$value->CroppedFocusedImage(60,40)->URL."'," : "thumb:'".$value->CroppedImage(60,40)->URL."',";
-            $json .= $focuspoint ? "image:'".$value->CroppedFocusedImage(800,450)->URL."'," : "image:'".$value->CroppedImage(800,450)->URL."',";
+            $json .= $focuspoint ? "image:'".$value->CroppedFocusedImage(960,540)->URL."'," : "image:'".$value->CroppedImage(800,450)->URL."',";
             $json .= "big:'".$value->URL."',";
             $json .= "title:'".$value->Title."',";
             $json .= "description:'".$value->NiceTitle."',";
@@ -382,7 +382,6 @@ class PageImages_PageExtension extends DataExtension
             Requirements::javascript(PAGEIMAGES_DIR . "/javascript/galleria/themes/classic/galleria.classic.min.js");
             Requirements::css(PAGEIMAGES_DIR . "/javascript/galleria/themes/classic/galleria.classic.css");
             Requirements::css(PAGEIMAGES_DIR . "/css/Gallery.css");
-            Requirements::css(PAGEIMAGES_DIR . "/font-awesome-4.5.0/css/font-awesome.min.css");
             // Prepare data for replacing JS variables
             $vars = array("data" => $this->imageToJSON($this->SortedImages()));
             Requirements::javascriptTemplate(PAGEIMAGES_DIR . "/javascript/PageImagesGalleria.js",$vars);
