@@ -27,13 +27,26 @@
         thumbnails: 'lazy',
         responsive: true,
         imageCrop: true,
-        transition: 'fade',
+        thumbCrop: "height",
+        transition: 'none', /*fade*/
+        easing: 'galleriaOut',
+        // Setting a relative height (16/9 ratio)
         height:0.5625,
         lightbox: true,
         swipe: true,
         initialTransition: 'fadeslide',
-        show: 0
+        show: 0,
+        showInfo: false,
+        _hideDock: Galleria.TOUCH ? false : true,
+        //maxScaleRatio: 1,
         /*autoplay: 5000*/
+        extend: function(options) {
+            var gallery = this;
+            $('#play').click(function() {
+                //console.log('play clicked');
+                gallery.playToggle();
+            });
+        }
     });
     Galleria.ready(function(){
         this.lazyLoadChunks(5,1000);

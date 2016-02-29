@@ -180,7 +180,6 @@ class PageImages_ImageExtension extends DataExtension
      */
     public function ExifDateString($exifString)
     {
-        SS_Log::log("ExifDateString ".$exifString ,SS_Log::WARN);
         if (strpos($exifString, "-") === false) {
             $exifPieces = explode(":", $exifString);
             return $exifPieces[0] . "-" . $exifPieces[1] . "-" . $exifPieces[2] . ":" . $exifPieces[3] . ":" . $exifPieces[4];
@@ -214,7 +213,7 @@ class PageImages_ImageExtension extends DataExtension
     protected function addExifDates()
     {
             $exif_date = $this->owner->ExifData($field='DateTimeOriginal');
-            $exif_date = is_null($exif_date) ? $this->owner->Created : $image->ExifDateString($exif_date);
+            $exif_date = is_null($exif_date) ? $this->owner->Created : $this->owner->ExifDateString($exif_date);
             if($this->owner->ExifDateString($exif_date) != $this->owner->ExifDate)
             {
                 $this->owner->ExifDate = $exif_date;

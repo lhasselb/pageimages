@@ -356,7 +356,7 @@ class PageImages_PageExtension extends DataExtension
         foreach ($images as $key => $value) {
             $json .= "{";
             $json .= $focuspoint ? "thumb:'".$value->CroppedFocusedImage(60,40)->URL."'," : "thumb:'".$value->CroppedImage(60,40)->URL."',";
-            $json .= $focuspoint ? "image:'".$value->CroppedFocusedImage(1024,768)->URL."'," : "image:'".$value->CroppedImage(1024,768)->URL."',";
+            $json .= $focuspoint ? "image:'".$value->CroppedFocusedImage(800,450)->URL."'," : "image:'".$value->CroppedImage(800,450)->URL."',";
             $json .= "big:'".$value->URL."',";
             $json .= "title:'".$value->Title."',";
             $json .= "description:'".$value->NiceTitle."',";
@@ -382,6 +382,7 @@ class PageImages_PageExtension extends DataExtension
             Requirements::javascript(PAGEIMAGES_DIR . "/javascript/galleria/themes/classic/galleria.classic.min.js");
             Requirements::css(PAGEIMAGES_DIR . "/javascript/galleria/themes/classic/galleria.classic.css");
             Requirements::css(PAGEIMAGES_DIR . "/css/Gallery.css");
+            Requirements::css(PAGEIMAGES_DIR . "/font-awesome-4.5.0/css/font-awesome.min.css");
             // Prepare data for replacing JS variables
             $vars = array("data" => $this->imageToJSON($this->SortedImages()));
             Requirements::javascriptTemplate(PAGEIMAGES_DIR . "/javascript/PageImagesGalleria.js",$vars);
