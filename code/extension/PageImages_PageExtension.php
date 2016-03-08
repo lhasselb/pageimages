@@ -91,8 +91,8 @@ class PageImages_PageExtension extends DataExtension
             $upload_folder_name = Config::inst()->get("PageImages_PageExtension", "upload_folder_name");
             // Obtain user selected folder - if not selected yet folder ID = 0
             if ($this->owner->Folder()->ID != 0) {
-                // Use complete path instead of folder name ($this->owner->Folder()->Name)!
-                $upload_folder_name = ltrim($this->owner->Folder()->getRelativePath(), '/assets/');
+                // Use complete path instead of folder name ($this->owner->Folder()->Name) and remove leading assets/ !
+                $upload_folder_name = str_replace("assets/","",$this->owner->Folder()->getRelativePath());
             }
             // Obtain alowed image extensions
             $allowed_extensions = Config::inst()->get("PageImages_PageExtension", "allowed_extensions");
@@ -139,7 +139,7 @@ class PageImages_PageExtension extends DataExtension
             // Display preselected folder
             if ($this->owner->Folder() && $this->owner->Folder()->ID != 0) {
                 $imageField->setTitle(_t("PageImages_PageExtension.IMAGESFOLDER", "Preselected folder: <span style='font-weight: bold;'>{folder}</span>", array(
-                    "folder" => ltrim($this->owner->Folder()->getRelativePath(), '/assets/')
+                    "folder" => $this->owner->Folder()->Name
                 ))); // $this->owner->Folder()->Name
                 $imageField->addExtraClass('wide-title');
             } else
