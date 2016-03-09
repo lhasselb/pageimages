@@ -49,8 +49,9 @@ class PageImages_ImageExtension extends DataExtension
      */
     public function onBeforeWrite() {
         $this->addSize();
-        $this->addExifDates();
+        $this->addExifDate();
     }
+
     /**
      *
      * {@inheritdoc}
@@ -183,7 +184,7 @@ class PageImages_ImageExtension extends DataExtension
         if (strpos($exifString, "-") === false) {
             $exifPieces = explode(":", $exifString);
             return $exifPieces[0] . "-" . $exifPieces[1] . "-" . $exifPieces[2] . ":" . $exifPieces[3] . ":" . $exifPieces[4];
-        }
+        } else return $exifString;
     }
 
     /**
@@ -205,15 +206,15 @@ class PageImages_ImageExtension extends DataExtension
                 // update database field
                 $image->ExifDate = $exif_date;
                 $image->write();
-                //SS_Log::log("Done write_exif_dates for ".$image->Name,SS_Log::WARN);
             }
         }
     }
 
-    protected function addExifDates()
+    protected function addExifDate()
     {
+            $date = SS_Datetime::now();
             $exif_date = $this->owner->ExifData($field='DateTimeOriginal');
-            $exif_date = is_null($exif_date) ? $this->owner->Created : $this->owner->ExifDateString($exif_date);
+            $exif_date = is_null($exif_date) ? $date : $this->owner->ExifDateString($exif_date);
             if($this->owner->ExifDateString($exif_date) != $this->owner->ExifDate)
             {
                 $this->owner->ExifDate = $exif_date;
