@@ -414,24 +414,14 @@ class PageImages_PageExtension extends DataExtension
         /*autoplay: 5000*/
 
     });
+
     Galleria.ready(function(){
         this.lazyLoadChunks(10,1000);
-        /*
-        this.addElement('play');
-        this.appendChild('stage','play');
-        var btn = this.$('play').css('color', 'white').text('PAUSE').click(function() { gallery.playToggle(); });
-        this.bind('play', function() {
-           btn.text('PLAY');
-           btn.addClass('playing');
-        }).bind('pause', function() {
-           btn.removeClass('playing');
-        });
-           this.addIdleState(this.get('play'), { opacity:0 });
-        */
     });
 JS
 
         );
+        }
     }
 
 }
