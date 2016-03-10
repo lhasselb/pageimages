@@ -346,7 +346,11 @@ class PageImages_PageExtension extends DataExtension
     /**
      * Utility to create a JSON string from image properties
      * @param  SSList $images a list of images
-     * @return String $json string containing json format
+     * @param  Int $thumbWidth thumb width
+     * @param  Int $thumbHeight thum height
+     * @param  Int $imageWidth image width
+     * @param  Int $imageHeight image height
+     * @return String containing json format
      */
     public function GalleriaData($images,$thumbWidth=60,$thumbHeight=40,$imageWidth=800,$imageHeight=400)
     {
@@ -383,8 +387,50 @@ class PageImages_PageExtension extends DataExtension
             Requirements::css(PAGEIMAGES_DIR . "/javascript/galleria/themes/classic/galleria.classic.css");
             Requirements::css(PAGEIMAGES_DIR . "/css/Gallery.css");
             // Prepare data for replacing JS variables
-            $vars = array("data" => $this->GalleriaData($this->SortedImages()));
-            Requirements::javascriptTemplate(PAGEIMAGES_DIR . "/javascript/PageImagesGalleria.js",$vars);
+            //$vars = array("data" => $this->GalleriaData($this->SortedImages()));
+            //Requirements::javascriptTemplate(PAGEIMAGES_DIR . "/javascript/PageImagesGalleria.js",$vars);
+            $escapedJson = $this->GalleriaData($this->SortedImages(),60,40,960,300);
+
+            Requirements::customScript(
+<<<JS
+    var data = $escapedJson;
+
+    Galleria.run('#galleria', {
+        dataSource: data,
+        thumbnails: 'lazy',
+        responsive: true,
+        imageCrop: true,
+        thumbCrop: "height",
+        transition: 'none', /*fade*/
+        easing: 'galleriaOut',
+        // Setting a relative height (16/9 ratio)
+        height:0.5625,
+        lightbox: true,
+        swipe: true,
+        initialTransition: 'fadeslide',
+        show: 0,
+        showInfo: false,
+        _hideDock: Galleria.TOUCH ? false : true,
+        /*autoplay: 5000*/
+
+    });
+    Galleria.ready(function(){
+        this.lazyLoadChunks(10,1000);
+        /*
+        this.addElement('play');
+        this.appendChild('stage','play');
+        var btn = this.$('play').css('color', 'white').text('PAUSE').click(function() { gallery.playToggle(); });
+        this.bind('play', function() {
+           btn.text('PLAY');
+           btn.addClass('playing');
+        }).bind('pause', function() {
+           btn.removeClass('playing');
+        });
+           this.addIdleState(this.get('play'), { opacity:0 });
+        */
+    });
+JS
+
         }
     }
 
