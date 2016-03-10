@@ -348,23 +348,23 @@ class PageImages_PageExtension extends DataExtension
      * @param  SSList $images a list of images
      * @return String $json string containing json format
      */
-    protected function imageToJSON($images)
+    public function GalleriaData($images,$thumbWidth=60,$thumbHeight=40,$imageWidth=800,$imageHeight=400)
     {
         // CHeck if jonom/silverstripe-focuspoint
         $focuspoint = (class_exists('FocusPointImage')) ? true : false;
-        $json = "";
-        foreach ($images as $key => $value) {
-            $json .= "{";
-            $json .= $focuspoint ? "thumb:'".$value->CroppedFocusedImage(60,40)->URL."'," : "thumb:'".$value->CroppedImage(60,40)->URL."',";
-            $json .= $focuspoint ? "image:'".$value->CroppedFocusedImage(960,540)->URL."'," : "image:'".$value->CroppedImage(800,450)->URL."',";
-            $json .= "big:'".$value->URL."',";
-            $json .= "title:'".$value->Title."',";
-            $json .= "description:'".$value->NiceTitle."',";
-            if(!empty($value->Caption)) $json .= "layer:'<div class=\"overlay\">".$value->Caption."</div>',";
-            $json .= "}";
-            if($value != $images->last()) $json .= ",";
+        $data = array();
+        foreach ($images as $image) {
+            $data[] = array(
+                'thumb' => $focuspoint ? $image->CroppedFocusedImage($thumbWidth,$thumbHeight)->URL : $image->CroppedImage($thumbWidth,$thumbHeight)->URL,
+                'image' => $focuspoint ? $image->CroppedFocusedImage($imageWidth,$imageHeight)->URL : $image->CroppedImage($imageWidth,$imageHeight)->URL,
+                'big' => $image->URL,
+                'title' => $image->Title,
+                'description' => $image->NiceTitle(),
+                'layer' => $image->Caption ? $image->Caption : ""
+            );
+
         }
-        return $json;
+        return Convert::array2json($data);
     }
 
     /**

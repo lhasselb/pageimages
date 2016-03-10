@@ -13,9 +13,7 @@
  * JSON data for Galleria images
  * @type {Array}
  */
-    var data = [
-        $data
-    ];
+    var data = $data;
 
 /**
  * Run Galleria witth options
