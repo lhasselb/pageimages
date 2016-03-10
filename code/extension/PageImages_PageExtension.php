@@ -383,7 +383,7 @@ class PageImages_PageExtension extends DataExtension
             Requirements::css(PAGEIMAGES_DIR . "/javascript/galleria/themes/classic/galleria.classic.css");
             Requirements::css(PAGEIMAGES_DIR . "/css/Gallery.css");
             // Prepare data for replacing JS variables
-            $vars = array("data" => $this->imageToJSON($this->SortedImages()));
+            $vars = array("data" => $this->GalleriaData($this->SortedImages()));
             Requirements::javascriptTemplate(PAGEIMAGES_DIR . "/javascript/PageImagesGalleria.js",$vars);
         }
     }
