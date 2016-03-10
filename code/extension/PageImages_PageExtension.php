@@ -431,7 +431,7 @@ class PageImages_PageExtension extends DataExtension
     });
 JS
 
-        }
+        );
     }
 
 }
