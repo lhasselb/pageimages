@@ -352,7 +352,7 @@ class PageImages_PageExtension extends DataExtension
      * @param  Int $imageHeight image height
      * @return String containing json format
      */
-    public function GalleriaData($images,$thumbWidth=60,$thumbHeight=40,$imageWidth=800,$imageHeight=400)
+    public function GalleriaData($images,$thumbWidth=60,$thumbHeight=40,$imageWidth=800,$imageHeight=600)
     {
         // CHeck if jonom/silverstripe-focuspoint
         $focuspoint = (class_exists('FocusPointImage')) ? true : false;
@@ -389,7 +389,7 @@ class PageImages_PageExtension extends DataExtension
             // Prepare data for replacing JS variables
             //$vars = array("data" => $this->GalleriaData($this->SortedImages()));
             //Requirements::javascriptTemplate(PAGEIMAGES_DIR . "/javascript/PageImagesGalleria.js",$vars);
-            $escapedJson = $this->GalleriaData($this->SortedImages(),60,40,960,300);
+            $escapedJson = $this->GalleriaData($this->SortedImages(),60,40,800,600);
 
             Requirements::customScript(
 <<<JS
