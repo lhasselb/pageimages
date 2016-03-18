@@ -352,7 +352,7 @@ class PageImages_PageExtension extends DataExtension
      * @param  Int $imageHeight image height
      * @return String containing json format
      */
-    public function GalleriaData($images,$thumbWidth=60,$thumbHeight=40,$imageWidth=800,$imageHeight=600)
+    public function GalleriaData($images,$thumbWidth=60,$thumbHeight=40,$imageWidth=800,$imageHeight=600,$showlayer=false)
     {
         // CHeck if jonom/silverstripe-focuspoint
         $focuspoint = (class_exists('FocusPointImage')) ? true : false;
@@ -364,7 +364,7 @@ class PageImages_PageExtension extends DataExtension
                 'big' => $image->URL,
                 'title' => $image->Title,
                 'description' => $image->NiceTitle(),
-                'layer' => $image->Caption ? $image->Caption : ""
+                'layer' => $showlayer ? $image->Caption : ""
             );
 
         }

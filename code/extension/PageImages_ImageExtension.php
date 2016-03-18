@@ -48,6 +48,7 @@ class PageImages_ImageExtension extends DataExtension
      *
      */
     public function onBeforeWrite() {
+        parent::onBeforeWrite();
         $this->addSize();
         $this->addExifDate();
     }
@@ -58,6 +59,7 @@ class PageImages_ImageExtension extends DataExtension
      *
      */
     public function onAfterWrite() {
+        parent::onAfterWrite();
         $this->ScaleUpload();
     }
 
@@ -210,33 +212,51 @@ class PageImages_ImageExtension extends DataExtension
         }
     }
 
+    /**
+     * [addExifDate description]
+     */
     protected function addExifDate()
     {
-            $date = SS_Datetime::now();
-            $exif_date = $this->owner->ExifData($field='DateTimeOriginal');
-            $exif_date = is_null($exif_date) ? $date : $this->owner->ExifDateString($exif_date);
-            if($this->owner->ExifDateString($exif_date) != $this->owner->ExifDate)
-            {
-                $this->owner->ExifDate = $exif_date;
-            }
+        $date = SS_Datetime::now();
+        $exif_date = $this->owner->ExifData($field='DateTimeOriginal');
+        $exif_date = is_null($exif_date) ? $date : $this->owner->ExifDateString($exif_date);
+        if($this->owner->ExifDateString($exif_date) != $this->owner->ExifDate)
+        {
+            $this->owner->ExifDate = $exif_date;
+        }
     }
 
+    /**
+     * [getMaxWidth description]
+     * @return [type] [description]
+     */
     public function getMaxWidth() {
         $w = Config::inst()->get('ScaledUploads', 'max-width');
         return ($w) ? $w : self::$max_width;
     }
 
+    /**
+     * [getMaxHeight description]
+     * @return [type] [description]
+     */
     public function getMaxHeight() {
         $h = Config::inst()->get('ScaledUploads', 'max-height');
         return ($h) ? $h : self::$max_height;
     }
 
+    /**
+     * [getAutoRotate description]
+     * @return [type] [description]
+     */
     public function getAutoRotate() {
         $r = Config::inst()->get('ScaledUploads', 'auto-rotate');
         if ($r === 0 || $r == 'false') return false;
         return self::$exif_rotation;
     }
 
+    /**
+     * [ScaleUpload description]
+     */
     public function ScaleUpload() {
         $extension = strtolower($this->owner->getExtension());
         if($this->owner->getHeight() > $this->getMaxHeight() || $this->owner->getWidth() > $this->getMaxWidth()) {
