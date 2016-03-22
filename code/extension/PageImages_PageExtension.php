@@ -389,38 +389,33 @@ class PageImages_PageExtension extends DataExtension
             // Prepare data for replacing JS variables
             //$vars = array("data" => $this->GalleriaData($this->SortedImages()));
             //Requirements::javascriptTemplate(PAGEIMAGES_DIR . "/javascript/PageImagesGalleria.js",$vars);
-            $escapedJson = $this->GalleriaData($this->SortedImages(),60,40,800,600);
-
-            Requirements::customScript(
-<<<JS
-    var data = $escapedJson;
-
-    Galleria.run('#galleria', {
-        dataSource: data,
-        thumbnails: 'lazy',
-        responsive: true,
-        imageCrop: true,
-        thumbCrop: "height",
-        transition: 'none', /*fade*/
-        easing: 'galleriaOut',
-        // Setting a relative height (16/9 ratio)
-        height:0.5625,
-        lightbox: true,
-        swipe: true,
-        initialTransition: 'fadeslide',
-        show: 0,
-        showInfo: false,
-        _hideDock: Galleria.TOUCH ? false : true,
-        /*autoplay: 5000*/
-
-    });
-
-    Galleria.ready(function(){
-        this.lazyLoadChunks(10,1000);
-    });
+            $escapedJson = $this->GalleriaData($this->SortedImages(),60,40,600,400);
+            Requirements::customScript(<<<JS
+                var data = $escapedJson;
+                Galleria.run('#galleria', {
+                    dataSource: data,
+                    thumbnails: 'lazy',
+                    responsive: true,
+                    imageCrop: true,
+                    thumbCrop: 'height',
+                    transition: 'fade',
+                    easing: 'galleriaOut',
+                    /*Setting a relative height (16/9 ratio = 0.5625)*/
+                    /*Setting a relative height (4/3 ratio = 0.75)*/
+                    height:0.75,
+                    lightbox: true,
+                    swipe: true,
+                    initialTransition: 'fadeslide',
+                    show: 0,
+                    showInfo: false,
+                    _hideDock: Galleria.TOUCH ? false : true,
+                    /*autoplay: 5000*/
+                });
+                Galleria.ready(function(){
+                    this.lazyLoadChunks(10,1000);
+                });
 JS
-
-        );
+            );
         }
     }
 
