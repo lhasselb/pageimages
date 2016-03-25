@@ -47,17 +47,6 @@ class PageImages_ImageExtension extends DataExtension
      * {@inheritdoc}
      *
      */
-    public function onBeforeWrite() {
-        parent::onBeforeWrite();
-        $this->addSize();
-        $this->addExifDate();
-    }
-
-    /**
-     *
-     * {@inheritdoc}
-     *
-     */
     public function onAfterWrite() {
         parent::onAfterWrite();
         $this->ScaleUpload();
@@ -144,15 +133,6 @@ class PageImages_ImageExtension extends DataExtension
         }
     }
 
-    protected function addSize()
-    {
-        $size = $this->owner->getAbsoluteSize();
-        if ($size != $this->owner->ImageSize) {
-            $this->owner->ImageSize = $size;
-        }
-    }
-
-
     /**
      * Returns EXIF info defined by $field from images (JPEG, TIFF) stored by the camera.
      *
@@ -209,20 +189,6 @@ class PageImages_ImageExtension extends DataExtension
                 $image->ExifDate = $exif_date;
                 $image->write();
             }
-        }
-    }
-
-    /**
-     * [addExifDate description]
-     */
-    protected function addExifDate()
-    {
-        $date = SS_Datetime::now();
-        $exif_date = $this->owner->ExifData($field='DateTimeOriginal');
-        $exif_date = is_null($exif_date) ? $date : $this->owner->ExifDateString($exif_date);
-        if($this->owner->ExifDateString($exif_date) != $this->owner->ExifDate)
-        {
-            $this->owner->ExifDate = $exif_date;
         }
     }
 
